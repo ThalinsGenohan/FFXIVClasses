@@ -1,0 +1,3 @@
+displayName = Black Mage
+author = Thalins
+version = 0.1

@@ -45,7 +45,7 @@ namespace BlackMage.UI
 
 		public override void Draw(SpriteBatch spriteBatch)
 		{
-			if (!Main.LocalPlayer.GetModPlayer<BlackMagePlayer>().SoulCrystal)
+			if (Main.LocalPlayer.GetModPlayer<BlackMagePlayer>().SoulCrystalLevel == 0)
 				return;
 
 			base.Draw(spriteBatch);
@@ -53,12 +53,12 @@ namespace BlackMage.UI
 
 		public override void Update(GameTime gameTime)
 		{
-			var modPlayer = Main.LocalPlayer.GetModPlayer<BlackMagePlayer>();
+			var blm = Main.LocalPlayer.GetModPlayer<BlackMagePlayer>();
 
-			if (!modPlayer.SoulCrystal)
+			if (blm.SoulCrystalLevel == 0)
 				return;
 
-			_text.SetText($"MP: {modPlayer.MP} / {BlackMagePlayer.MaxMP}");
+			_text.SetText($"MP: {blm.MP} / {BlackMagePlayer.MaxMP}");
 			base.Update(gameTime);
 		}
 
@@ -68,7 +68,7 @@ namespace BlackMage.UI
 
 			var modPlayer = Main.LocalPlayer.GetModPlayer<BlackMagePlayer>();
 
-			float quotient = (float)modPlayer.MP / (float)BlackMagePlayer.MaxMP;
+			float quotient = modPlayer.MP / (float)BlackMagePlayer.MaxMP;
 			quotient = Utils.Clamp(quotient, 0f, 1f);
 
 			var hitbox = _barFrame.GetInnerDimensions().ToRectangle();

@@ -10,16 +10,28 @@ namespace BlackMage.UI
 {
 	internal class ElementalGauge : UIState
 	{
-		private static readonly Texture2D BlankTexture        = ModContent.GetTexture("BlackMage/UI/Blank");
-		private static readonly Texture2D EmptyDiamondTexture = ModContent.GetTexture("BlackMage/UI/EmptyDiamond");
-		private static readonly Texture2D FireDiamondTexture  = ModContent.GetTexture("BlackMage/UI/FireDiamond");
-		private static readonly Texture2D IceDiamondTexture   = ModContent.GetTexture("BlackMage/UI/IceDiamond");
-		private static readonly Texture2D HeartDiamondTexture = ModContent.GetTexture("BlackMage/UI/HeartDiamond");
+		private static readonly Texture2D BlankTexture = ModContent.GetTexture("BlackMage/UI/Blank");
 
-		private static readonly Texture2D
-			PolyglotDiamondTexture = ModContent.GetTexture("BlackMage/UI/PolyglotDiamond");
+		private static readonly Texture2D SimpleEmptyDiamondTexture =
+			ModContent.GetTexture("BlackMage/UI/ElementalGauge/Simple/EmptyDiamond");
 
-		private static readonly Texture2D ParadoxDiamondTexture = ModContent.GetTexture("BlackMage/UI/ParadoxDiamond");
+		private static readonly Texture2D SimpleFireDiamondTexture =
+			ModContent.GetTexture("BlackMage/UI/ElementalGauge/Simple/FireDiamond");
+
+		private static readonly Texture2D SimpleIceDiamondTexture =
+			ModContent.GetTexture("BlackMage/UI/ElementalGauge/Simple/IceDiamond");
+
+		private static readonly Texture2D SimpleHeartDiamondTexture =
+			ModContent.GetTexture("BlackMage/UI/ElementalGauge/Simple/HeartDiamond");
+
+		private static readonly Texture2D SimplePolyglotDiamondTexture =
+			ModContent.GetTexture("BlackMage/UI/ElementalGauge/Simple/PolyglotDiamond");
+
+		private static readonly Texture2D SimplePolyglotBarFrameTexture =
+			ModContent.GetTexture("BlackMage/UI/ElementalGauge/Simple/PolyglotBarFrame");
+
+		private static readonly Texture2D SimpleParadoxDiamondTexture =
+			ModContent.GetTexture("BlackMage/UI/ElementalGauge/Simple/ParadoxDiamond");
 
 		private const float Scale       = 3f;
 		private const float DiamondSize = 7f * Scale;
@@ -55,7 +67,7 @@ namespace BlackMage.UI
 			_elementStacks = new UIImage[BlackMagePlayer.MaxElementStacks];
 			for (var i = 0; i < _elementStacks.Length; i++)
 			{
-				_elementStacks[i] = new UIImage(EmptyDiamondTexture);
+				_elementStacks[i] = new UIImage(SimpleEmptyDiamondTexture);
 				_elementStacks[i].Left.Set(ElementStackPos.X + DiamondSize * i, 0f);
 				_elementStacks[i].Top.Set(ElementStackPos.Y, 0f);
 				_elementStacks[i].Width.Set(DiamondSize, 0f);
@@ -72,23 +84,23 @@ namespace BlackMage.UI
 				_hearts[i].Height.Set(DiamondSize, 0f);
 			}
 
-			_polyglots = new UIImage[BlackMagePlayer.MaxPolyglotCharges];
+			_polyglots = new UIImage[BlackMagePlayer.MaxPolyglots];
 			for (var i = 0; i < _polyglots.Length; i++)
 			{
-				_polyglots[i] = new UIImage(EmptyDiamondTexture);
+				_polyglots[i] = new UIImage(SimpleEmptyDiamondTexture);
 				_polyglots[i].Left.Set(PolyglotPos.X + DiamondSize * i, 0f);
 				_polyglots[i].Top.Set(PolyglotPos.Y, 0f);
 				_polyglots[i].Width.Set(DiamondSize, 0f);
 				_polyglots[i].Height.Set(DiamondSize, 0f);
 			}
 
-			_paradox = new UIImage(EmptyDiamondTexture);
+			_paradox = new UIImage(SimpleEmptyDiamondTexture);
 			_paradox.Left.Set(ParadoxPos.X, 0f);
 			_paradox.Top.Set(ParadoxPos.Y, 0f);
 			_paradox.Width.Set(DiamondSize, 0f);
 			_paradox.Height.Set(DiamondSize, 0f);
 
-			_polyglotBarFrame = new UIImage(ModContent.GetTexture("BlackMage/UI/PolyglotBarFrame"));
+			_polyglotBarFrame = new UIImage(SimplePolyglotBarFrameTexture);
 			_polyglotBarFrame.Left.Set(PolyglotBarPos.X, 0f);
 			_polyglotBarFrame.Top.Set(PolyglotBarPos.Y, 0f);
 			_polyglotBarFrame.Width.Set(BarWidth, 0f);
@@ -116,7 +128,7 @@ namespace BlackMage.UI
 
 		public override void Draw(SpriteBatch spriteBatch)
 		{
-			if (!Main.LocalPlayer.GetModPlayer<BlackMagePlayer>().SoulCrystal)
+			if (Main.LocalPlayer.GetModPlayer<BlackMagePlayer>().SoulCrystalLevel == 0)
 				return;
 
 			base.Draw(spriteBatch);
@@ -124,60 +136,88 @@ namespace BlackMage.UI
 
 		public override void Update(GameTime gameTime)
 		{
-			var modPlayer = Main.LocalPlayer.GetModPlayer<BlackMagePlayer>();
+			var blm = Main.LocalPlayer.GetModPlayer<BlackMagePlayer>();
 
-			if (!modPlayer.SoulCrystal)
+			if (blm.SoulCrystalLevel == 0)
 				return;
 
-			_elementCountdown.SetText(modPlayer.ElementalCharge != 0
-				                          ? (modPlayer.ElementalChargeTimer / 60).ToString()
-				                          : "");
+			_elementCountdown.SetText(blm.ElementalCharge != 0 ? (blm.ElementalChargeTimer / 60).ToString() : "");
 
 			base.Update(gameTime);
+		}
+
+		private void DrawSimple(SpriteBatch spriteBatch)
+		{
+
+			var blm = Main.LocalPlayer.GetModPlayer<BlackMagePlayer>();
+
+			if (blm.AstralFire > 0)
+				for (var i = 0; i < blm.AstralFire; i++)
+					_elementStacks[i].SetImage(SimpleFireDiamondTexture);
+			else if (blm.UmbralIce > 0)
+				for (var i = 0; i < blm.UmbralIce; i++)
+					_elementStacks[i].SetImage(SimpleIceDiamondTexture);
+
+			for (int i = Math.Max(blm.AstralFire, blm.UmbralIce); i < blm.AllowedElementStacks; i++)
+				_elementStacks[i].SetImage(SimpleEmptyDiamondTexture);
+			for (int i = blm.AllowedElementStacks; i < BlackMagePlayer.MaxElementStacks; i++)
+				_elementStacks[i].SetImage(BlankTexture);
+
+			if (blm.CanHaveUmbralHearts)
+			{
+				for (var i = 0; i < blm.UmbralHearts; i++)
+					_hearts[i].SetImage(SimpleHeartDiamondTexture);
+				for (int i = blm.UmbralHearts; i < BlackMagePlayer.MaxUmbralHearts; i++)
+					_hearts[i].SetImage(BlankTexture);
+			}
+			else
+				for (var i = 0; i < BlackMagePlayer.MaxUmbralHearts; i++)
+					_hearts[i].SetImage(BlankTexture);
+
+			if (blm.AllowedPolyglots > 0)
+			{
+				for (var i = 0; i < blm.Polyglots; i++)
+					_polyglots[i].SetImage(SimplePolyglotDiamondTexture);
+				for (int i = blm.Polyglots; i < blm.AllowedPolyglots; i++)
+					_polyglots[i].SetImage(SimpleEmptyDiamondTexture);
+				for (int i = blm.AllowedPolyglots; i < BlackMagePlayer.MaxPolyglots; i++)
+					_polyglots[i].SetImage(BlankTexture);
+
+				_polyglotBarFrame.SetImage(SimplePolyglotBarFrameTexture);
+
+				float quotient = (BlackMagePlayer.PolyglotMaxTime - blm.PolyglotTimer) /
+								 (float)BlackMagePlayer.PolyglotMaxTime;
+				quotient = Utils.Clamp(quotient, 0f, 1f);
+
+				var hitbox = _polyglotBarFrame.GetInnerDimensions().ToRectangle();
+				hitbox.X += (int)(DiamondSize / (DiamondSize / Scale));
+				hitbox.Width -= (int)(DiamondSize / (DiamondSize / Scale / 2f));
+				hitbox.Y += (int)(DiamondSize / (DiamondSize / Scale));
+				hitbox.Height -= (int)(DiamondSize / (DiamondSize / Scale / 2f));
+
+				var steps = (int)((hitbox.Right - hitbox.Left) * quotient);
+				spriteBatch.Draw(Main.magicPixel,
+								 new Rectangle(hitbox.Left, hitbox.Y, steps, hitbox.Height),
+								 _polyglotColor);
+			}
+			else
+			{
+				for (var i = 0; i < BlackMagePlayer.MaxPolyglots; i++)
+					_polyglots[i].SetImage(BlankTexture);
+				_polyglotBarFrame.SetImage(BlankTexture);
+			}
+
+			if (blm.CanUseParadox)
+				_paradox.SetImage(blm.ParadoxReady ? SimpleParadoxDiamondTexture : SimpleEmptyDiamondTexture);
+			else
+				_paradox.SetImage(BlankTexture);
 		}
 
 		protected override void DrawSelf(SpriteBatch spriteBatch)
 		{
 			base.DrawSelf(spriteBatch);
 
-			var modPlayer = Main.LocalPlayer.GetModPlayer<BlackMagePlayer>();
-
-			float quotient = (BlackMagePlayer.PolyglotMaxTime - modPlayer.PolyglotTimer) /
-			                 (float)BlackMagePlayer.PolyglotMaxTime;
-			quotient = Utils.Clamp(quotient, 0f, 1f);
-
-			var hitbox = _polyglotBarFrame.GetInnerDimensions().ToRectangle();
-			hitbox.X      += (int)(DiamondSize / (DiamondSize / Scale));
-			hitbox.Width  -= (int)(DiamondSize / (DiamondSize / Scale / 2f));
-			hitbox.Y      += (int)(DiamondSize / (DiamondSize / Scale));
-			hitbox.Height -= (int)(DiamondSize / (DiamondSize / Scale / 2f));
-
-			var steps = (int)((hitbox.Right - hitbox.Left) * quotient);
-			spriteBatch.Draw(Main.magicPixel,
-			                 new Rectangle(hitbox.Left, hitbox.Y, steps, hitbox.Height),
-			                 _polyglotColor);
-
-			if (modPlayer.AstralFire > 0)
-				for (var i = 0; i < modPlayer.AstralFire; i++)
-					_elementStacks[i].SetImage(FireDiamondTexture);
-			else if (modPlayer.UmbralIce > 0)
-				for (var i = 0; i < modPlayer.UmbralIce; i++)
-					_elementStacks[i].SetImage(IceDiamondTexture);
-
-			for (int i = Math.Max(modPlayer.AstralFire, modPlayer.UmbralIce); i < BlackMagePlayer.MaxElementStacks; i++)
-				_elementStacks[i].SetImage(EmptyDiamondTexture);
-
-			for (var i = 0; i < modPlayer.UmbralHearts; i++)
-				_hearts[i].SetImage(HeartDiamondTexture);
-			for (int i = modPlayer.UmbralHearts; i < BlackMagePlayer.MaxUmbralHearts; i++)
-				_hearts[i].SetImage(BlankTexture);
-
-			for (var i = 0; i < modPlayer.PolyglotCharges; i++)
-				_polyglots[i].SetImage(PolyglotDiamondTexture);
-			for (int i = modPlayer.PolyglotCharges; i < BlackMagePlayer.MaxPolyglotCharges; i++)
-				_polyglots[i].SetImage(EmptyDiamondTexture);
-
-			_paradox.SetImage(modPlayer.ParadoxReady ? ParadoxDiamondTexture : EmptyDiamondTexture);
+			DrawSimple(spriteBatch);
 		}
 	}
 }

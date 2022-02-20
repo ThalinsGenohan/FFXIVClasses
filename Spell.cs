@@ -1,26 +1,32 @@
 ﻿namespace BlackMage
 {
-	internal class Spell
+	public class Spell
 	{
-		public string   Name           { get; }
-		public int      Potency        { get; }
-		public int      MPCost         { get; }
-		public Elements Element        { get; }
-		public int      ElementalStack { get; }
-		public int      Projectile     { get; }
-		public bool     StackRequired  { get; }
-		public int      Radius         { get; }
-
-		public Spell(string name, int potency, int mpCost, Elements element, int elementalStack, int projectile, bool stackRequired = false, int radius = 0)
+		public enum ProjectileTypes
 		{
-			Name           = name;
-			Potency        = potency;
-			MPCost         = mpCost;
-			Element        = element;
-			ElementalStack = elementalStack;
-			Projectile     = projectile;
-			StackRequired  = stackRequired;
-			Radius         = radius;
+			DirectHit        = 0,
+			HomingProjectile = 1,
+		}
+
+		public const int SingleTargetSize = 5;
+		public const int AoESize          = 40;
+
+		// General properties
+		public string Name       { get; }
+		public int    Potency    { get; }
+		public int    MPCost     { get; }
+		public int    Projectile { get; }
+
+		// Black Mage properties
+		public byte ElementStack  { get; set; } = Elements.NoElement | Elements.NoStack;
+		public bool StackRequired { get; set; } = false;
+
+		public Spell(string name, int potency, int mpCost, int projectile)
+		{
+			Name       = name;
+			Potency    = potency;
+			MPCost     = mpCost;
+			Projectile = projectile;
 		}
 	}
 }

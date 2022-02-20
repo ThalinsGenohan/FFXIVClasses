@@ -6,13 +6,13 @@ namespace BlackMage
 	internal class BlackMagePlayer : ModPlayer
 	{
 		public const uint MPTickMaxTime          = 150;
-		public const  uint ElementalChargeMaxTime = 900;
-		public const  uint PolyglotMaxTime        = 1800;
-		public const  int  MaxMP                  = 10000;
+		public const uint ElementalChargeMaxTime = 900;
+		public const uint PolyglotMaxTime        = 1800;
+		public const int  MaxMP                  = 10000;
 
 		public const int MaxElementStacks   = 3;
 		public const int MaxUmbralHearts    = 3;
-		public const int MaxPolyglotCharges = 2;
+		public const int MaxPolyglots = 2;
 
 		private static readonly int[]   MPRegenRate        = { 6200, 4700, 3200, 200, 0, 0, 0 };
 		private static readonly float[] FireMPMultList     = { 0f, 0f, 0f, 1f, 2f, 2f, 2f };
@@ -20,12 +20,37 @@ namespace BlackMage
 		private static readonly float[] FireDamageMultList = { 0.7f, 0.8f, 0.9f, 1f, 1.4f, 1.6f, 1.8f };
 		private static readonly float[] IceDamageMultList  = { 1f, 1f, 1f, 1f, 0.9f, 0.8f, 0.7f };
 
-		public float FireMPMult => FireMPMultList[ElementalCharge + MaxElementStacks];
-		public float IceMPMult  => IceMPMultList[ElementalCharge + MaxElementStacks];
+		public float FireMPMult     => FireMPMultList[MaxElementStacks + (ElementalCharge > 0 ? 0 : ElementalCharge)];
+		public float IceMPMult      => IceMPMultList[ElementalCharge + MaxElementStacks];
 		public float FireDamageMult => FireDamageMultList[ElementalCharge + MaxElementStacks];
 		public float IceDamageMult  => IceDamageMultList[ElementalCharge + MaxElementStacks];
 
-		public bool SoulCrystal { get; set; }
+		public int SoulCrystalLevel { get; set; }
+
+		public int AllowedElementStacks
+		{
+			get
+			{
+				if (SoulCrystalLevel >= 35) return 3;
+				if (SoulCrystalLevel >= 20) return 2;
+				if (SoulCrystalLevel >= 10) return 1;
+				return 0;
+			}
+		}
+
+		public bool CanHaveUmbralHearts => SoulCrystalLevel >= 60;
+
+		public int AllowedPolyglots
+		{
+			get
+			{
+				if (SoulCrystalLevel >= 80) return 2;
+				if (SoulCrystalLevel >= 70) return 1;
+				return 0;
+			}
+		}
+
+		public bool CanUseParadox => SoulCrystalLevel >= 90;
 
 		public int MP
 		{
@@ -36,32 +61,38 @@ namespace BlackMage
 		public int ElementalCharge
 		{
 			get => _elementalCharge;
-			set => _elementalCharge = Math.Max(Math.Min(value, MaxElementStacks), -MaxElementStacks);
+			set => _elementalCharge = Math.Max(Math.Min(value, AllowedElementStacks), -AllowedElementStacks);
 		}
+
 		public int AstralFire
 		{
 			get => Math.Max(ElementalCharge, 0);
-			set => ElementalCharge = Math.Max(Math.Min(value, MaxElementStacks), 0);
+			set => ElementalCharge = Math.Max(Math.Min(value, AllowedElementStacks), 0);
 		}
+
 		public int UmbralIce
 		{
 			get => Math.Max(-ElementalCharge, 0);
-			set => ElementalCharge = -Math.Max(Math.Min(value, MaxElementStacks), 0);
+			set => ElementalCharge = -Math.Max(Math.Min(value, AllowedElementStacks), 0);
 		}
 
 		public int UmbralHearts
 		{
 			get => _umbralHearts;
-			set => _umbralHearts = Math.Max(Math.Min(value, MaxUmbralHearts), 0);
+			set => _umbralHearts = CanHaveUmbralHearts ? Math.Max(Math.Min(value, MaxUmbralHearts), 0) : 0;
 		}
 
-		public int  PolyglotCharges
+		public int Polyglots
 		{
-			get => _polyglotCharges;
-			set => _polyglotCharges = Math.Max(Math.Min(value, MaxPolyglotCharges), 0);
+			get => _polyglots;
+			set => _polyglots = Math.Max(Math.Min(value, AllowedPolyglots), 0);
 		}
 
-		public bool ParadoxReady    { get; set; }
+		public bool ParadoxReady
+		{
+			get => _paradoxReady;
+			set => _paradoxReady = value && CanUseParadox;
+		}
 
 		public uint MPTickTimer          { get; set; } = MPTickMaxTime;
 		public uint ElementalChargeTimer { get; set; } = ElementalChargeMaxTime;
@@ -70,7 +101,8 @@ namespace BlackMage
 		private int _mp;
 		private int _elementalCharge;
 		private int _umbralHearts;
-		private int _polyglotCharges;
+		private int _polyglots;
+		private bool _paradoxReady;
 
 		public override void PostUpdateMiscEffects()
 		{
@@ -89,46 +121,60 @@ namespace BlackMage
 
 			if (--PolyglotTimer != 0) return;
 
-			PolyglotCharges = Math.Min(PolyglotCharges + 1, MaxPolyglotCharges);
+			Polyglots = Math.Min(Polyglots + 1, MaxPolyglots);
 			PolyglotTimer   = PolyglotMaxTime;
 		}
 
 		public override void ResetEffects()
 		{
-			SoulCrystal = false;
+			SoulCrystalLevel = 0;
 		}
 
-		public void AddElementalStack(int stack)
+		public void AddElementalStack(int elementStack)
 		{
-			if (stack == MaxElementStacks) // Fire III
+			int element = elementStack & Elements.ElementMask;
+			int stack   = elementStack & Elements.StackMask;
+
+			switch (element)
 			{
-				AstralFire           = MaxElementStacks;
-				ElementalChargeTimer = ElementalChargeMaxTime;
-			}
-			else if (stack > 0) // Fire
-			{
-				if (UmbralIce > 0)
-					RemoveElementalStack();
-				else
-				{
-					AstralFire++;
-					ElementalChargeTimer = ElementalChargeMaxTime;
-				}
-			}
-			else if (stack == -MaxElementStacks) // Blizzard III
-			{
-				UmbralIce            = MaxElementStacks;
-				ElementalChargeTimer = ElementalChargeMaxTime;
-			}
-			else if (stack < 0) // Blizzard
-			{
-				if (AstralFire > 0)
-					RemoveElementalStack();
-				else
-				{
-					UmbralIce++;
-					ElementalChargeTimer = ElementalChargeMaxTime;
-				}
+				case Elements.FireElement:
+					switch (stack)
+					{
+						case Elements.FullStack:
+							if (UmbralIce == 3 && UmbralHearts == 3)
+								ParadoxReady = true;
+							AstralFire           = MaxElementStacks;
+							ElementalChargeTimer = ElementalChargeMaxTime;
+							break;
+						case Elements.OneStack when UmbralIce > 0:
+							RemoveElementalStack();
+							break;
+						case Elements.OneStack:
+							AstralFire++;
+							ElementalChargeTimer = ElementalChargeMaxTime;
+							break;
+					}
+
+					break;
+				case Elements.IceElement:
+					switch (stack)
+					{
+						case Elements.FullStack:
+							if (AstralFire == 3)
+								ParadoxReady = true;
+							UmbralIce            = MaxElementStacks;
+							ElementalChargeTimer = ElementalChargeMaxTime;
+							break;
+						case Elements.OneStack when AstralFire > 0:
+							RemoveElementalStack();
+							break;
+						case Elements.OneStack:
+							UmbralIce++;
+							ElementalChargeTimer = ElementalChargeMaxTime;
+							break;
+					}
+
+					break;
 			}
 		}
 
@@ -138,6 +184,67 @@ namespace BlackMage
 			UmbralHearts         = 0;
 			ElementalChargeTimer = ElementalChargeTimer;
 			PolyglotTimer        = PolyglotMaxTime;
+		}
+
+		public bool CastSpell(Spell spell)
+		{
+			int element = spell.ElementStack & Elements.ElementMask;
+			int stack   = spell.ElementStack & Elements.StackMask;
+			int mp;
+
+			switch (element)
+			{
+				case Elements.FireElement:
+					if (spell.StackRequired && AstralFire == 0) return false;
+
+					if (spell.MPCost == -1)
+					{
+						if (MP < 800) return false;
+						mp = MP / (stack == Elements.HeartStack && UmbralHearts > 0 ? 3 : 1);
+					}
+					else
+					{
+						mp = (int)(spell.MPCost * FireMPMult);
+						if (MP < mp) return false;
+					}
+
+					MP -= mp;
+					AddElementalStack(spell.ElementStack);
+					if (AstralFire > 0)
+						UmbralHearts -= stack == Elements.HeartStack ? UmbralHearts : 1;
+
+					break;
+				case Elements.IceElement:
+					if (spell.StackRequired && UmbralIce == 0) return false;
+
+					mp = (int)(spell.MPCost * IceMPMult);
+					if (MP < mp) return false;
+
+					MP -= mp;
+					AddElementalStack(spell.ElementStack);
+					if (stack == Elements.HeartStack)
+						UmbralHearts = MaxUmbralHearts;
+
+					break;
+				case Elements.ParadoxElement:
+					if (!ParadoxReady) return false;
+
+					mp = UmbralIce > 0 ? 0 : spell.MPCost;
+
+					if (MP < mp) return false;
+
+					MP                   -= mp;
+					ParadoxReady         =  false;
+					ElementalChargeTimer =  ElementalChargeMaxTime;
+					break;
+				case Elements.PolyglotElement:
+					if (Polyglots == 0) return false;
+
+					Polyglots--;
+					break;
+			}
+
+			return true;
 		}
 	}
 }

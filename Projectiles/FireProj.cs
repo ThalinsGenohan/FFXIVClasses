@@ -1,4 +1,5 @@
-﻿using Terraria.ModLoader;
+﻿using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace BlackMage.Projectiles
 {
@@ -7,6 +8,8 @@ namespace BlackMage.Projectiles
 		public override void SetStaticDefaults()
 		{
 			DisplayName.SetDefault("Fire");
+			ProjectileID.Sets.Homing[projectile.type]                  = true;
+			ProjectileID.Sets.MinionTargettingFeature[projectile.type] = true;
 		}
 
 		public override void SetDefaults()

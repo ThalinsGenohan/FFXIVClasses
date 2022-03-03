@@ -1,7 +1,10 @@
-﻿using Terraria.ID;
+﻿using BlackMage.Projectiles;
+using Microsoft.Xna.Framework;
+using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace BlackMage.Items
+namespace BlackMage.Items.Weapons
 {
 	public class Soulscourge : ModItem
 	{
@@ -9,7 +12,7 @@ namespace BlackMage.Items
 		{
 			DisplayName.SetDefault("Soulscourge");
 			Tooltip.SetDefault("Two-Handed Thaumaturge's Arm");
-			ItemID.Sets.LockOnIgnoresCollision[item.type] = true;
+			ItemID.Sets.LockOnIgnoresCollision[item.type] = false;
 		}
 
 		public override void SetDefaults()
@@ -19,21 +22,20 @@ namespace BlackMage.Items
 			item.height       = 40;
 			item.useTime      = 20;
 			item.useAnimation = 20;
-			item.useStyle     = ItemUseStyleID.HoldingOut;
+			item.useStyle     = ItemUseStyleID.SwingThrow;
 			item.knockBack    = 0f;
 			item.value        = 10000;
 			item.rare         = ItemRarityID.Purple;
 			item.UseSound     = SoundID.Item20;
 			item.autoReuse    = false;
 			item.shootSpeed   = 10f;
-			item.mana         = 0;
+			item.mana         = 1;
 			item.damage       = 180;
-
-			item.noMelee = true;
-			UseSpell(Spells.Scathe);
+			item.noMelee      = true;
+			item.shoot        = ModContent.ProjectileType<ScatheProj>();
 		}
 
-		/*public override bool Shoot(Player player,
+		public override bool Shoot(Player player,
 		                           ref Vector2 position,
 		                           ref float speedX,
 		                           ref float speedY,
@@ -41,16 +43,9 @@ namespace BlackMage.Items
 		                           ref int damage,
 		                           ref float knockBack)
 		{
-			var modPlayer = player.GetModPlayer<BlackMagePlayer>();
+			if (player.HasMinionAttackTargetNPC) return false;
 
 			return base.Shoot(player, ref position, ref speedX, ref speedY, ref type, ref damage, ref knockBack);
-		}*/
-
-		private void UseSpell(Spell spell)
-		{
-			item.useStyle = ItemUseStyleID.HoldingOut;
-			item.SetNameOverride($"Soulscourge ({spell.Name})");
-			item.shoot = spell.Projectile;
 		}
 	}
 }

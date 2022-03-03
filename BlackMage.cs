@@ -11,8 +11,11 @@ namespace BlackMage
 	{
 		internal MPBar          MPBar          { get; private set; }
 		internal ElementalGauge ElementalGauge { get; private set; }
+		internal SpellUI        SpellUI        { get; private set; }
+
 		private  UserInterface  _mpBarUI;
 		private  UserInterface  _elementalGaugeUI;
+		private  UserInterface  _spellUI;
 
 		public override void Load()
 		{
@@ -25,14 +28,49 @@ namespace BlackMage
 				ElementalGauge    = new ElementalGauge();
 				_elementalGaugeUI = new UserInterface();
 				_elementalGaugeUI.SetState(ElementalGauge);
+
+				SpellUI  = new SpellUI();
+				_spellUI = new UserInterface();
+				_spellUI.SetState(SpellUI);
 			}
 			base.Load();
 		}
 
 		public override void UpdateUI(GameTime gameTime)
 		{
-			_mpBarUI?.Update(gameTime);
-			_elementalGaugeUI?.Update(gameTime);
+			if (!Main.dedServ)
+			{
+				Player player = Main.LocalPlayer;
+				var blm    = player.GetModPlayer<BlackMagePlayer>();
+
+				if (blm.SoulCrystalLevel == 0)
+				{
+					if (_mpBarUI.CurrentState != null)
+						_mpBarUI.SetState(null);
+					if (_elementalGaugeUI.CurrentState != null)
+						_elementalGaugeUI.SetState(null);
+					if (_spellUI.CurrentState != null)
+						_spellUI.SetState(null);
+				}
+				else
+				{
+					if (_mpBarUI.CurrentState == null)
+						_mpBarUI.SetState(MPBar);
+					if (_elementalGaugeUI.CurrentState == null)
+						_elementalGaugeUI.SetState(ElementalGauge);
+					if (player.HasMinionAttackTargetNPC)
+					{
+						if (_spellUI.CurrentState == null)
+							_spellUI.SetState(SpellUI);
+					}
+					else if (_spellUI.CurrentState != null)
+						_spellUI.SetState(null);
+				}
+
+				_mpBarUI.Update(gameTime);
+				_elementalGaugeUI.Update(gameTime);
+				_spellUI.Update(gameTime);
+			}
 		}
 
 		public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers)
@@ -56,6 +94,17 @@ namespace BlackMage
 					              delegate
 					              {
 						              _elementalGaugeUI.Draw(Main.spriteBatch, new GameTime());
+						              return true;
+					              },
+					              InterfaceScaleType.UI
+				              )
+				);
+				layers.Insert(resourceBarIndex,
+				              new LegacyGameInterfaceLayer(
+					              "BlackMage: Spell UI",
+					              delegate
+					              {
+						              _spellUI.Draw(Main.spriteBatch, new GameTime());
 						              return true;
 					              },
 					              InterfaceScaleType.UI

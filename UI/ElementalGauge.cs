@@ -148,7 +148,6 @@ namespace BlackMage.UI
 
 		private void DrawSimple(SpriteBatch spriteBatch)
 		{
-
 			var blm = Main.LocalPlayer.GetModPlayer<BlackMagePlayer>();
 
 			if (blm.AstralFire > 0)
@@ -217,6 +216,11 @@ namespace BlackMage.UI
 		{
 			base.DrawSelf(spriteBatch);
 
+		}
+
+		protected override void DrawChildren(SpriteBatch spriteBatch)
+		{
+			base.DrawChildren(spriteBatch);
 			DrawSimple(spriteBatch);
 		}
 	}

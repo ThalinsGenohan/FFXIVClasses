@@ -1,18 +1,23 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.Xna.Framework;
+using Terraria;
 using Terraria.ModLoader;
 
 namespace BlackMage
 {
 	internal class BlackMagePlayer : ModPlayer
 	{
+		public const uint GlobalCooldownMaxTime  = 150;
 		public const uint MPTickMaxTime          = 150;
 		public const uint ElementalChargeMaxTime = 900;
 		public const uint PolyglotMaxTime        = 1800;
 		public const int  MaxMP                  = 10000;
 
-		public const int MaxElementStacks   = 3;
-		public const int MaxUmbralHearts    = 3;
-		public const int MaxPolyglots = 2;
+		public const int MaxElementStacks = 3;
+		public const int MaxUmbralHearts  = 3;
+		public const int MaxPolyglots     = 2;
 
 		private static readonly int[]   MPRegenRate        = { 6200, 4700, 3200, 200, 0, 0, 0 };
 		private static readonly float[] FireMPMultList     = { 0f, 0f, 0f, 1f, 2f, 2f, 2f };
@@ -20,12 +25,12 @@ namespace BlackMage
 		private static readonly float[] FireDamageMultList = { 0.7f, 0.8f, 0.9f, 1f, 1.4f, 1.6f, 1.8f };
 		private static readonly float[] IceDamageMultList  = { 1f, 1f, 1f, 1f, 0.9f, 0.8f, 0.7f };
 
+		public Dictionary<Spell, uint> SpellCooldowns { get; } = new Dictionary<Spell, uint>();
+
 		public float FireMPMult     => FireMPMultList[MaxElementStacks + (ElementalCharge > 0 ? 0 : ElementalCharge)];
 		public float IceMPMult      => IceMPMultList[ElementalCharge + MaxElementStacks];
 		public float FireDamageMult => FireDamageMultList[ElementalCharge + MaxElementStacks];
 		public float IceDamageMult  => IceDamageMultList[ElementalCharge + MaxElementStacks];
-
-		public int SoulCrystalLevel { get; set; }
 
 		public int AllowedElementStacks
 		{
@@ -51,6 +56,8 @@ namespace BlackMage
 		}
 
 		public bool CanUseParadox => SoulCrystalLevel >= 90;
+
+		public int SoulCrystalLevel { get; set; }
 
 		public int MP
 		{
@@ -94,18 +101,25 @@ namespace BlackMage
 			set => _paradoxReady = value && CanUseParadox;
 		}
 
+		public uint GlobalCooldownTimer  { get; set; } = GlobalCooldownMaxTime;
 		public uint MPTickTimer          { get; set; } = MPTickMaxTime;
 		public uint ElementalChargeTimer { get; set; } = ElementalChargeMaxTime;
 		public uint PolyglotTimer        { get; set; } = PolyglotMaxTime;
 
-		private int _mp;
-		private int _elementalCharge;
-		private int _umbralHearts;
-		private int _polyglots;
+		private int  _mp;
+		private int  _elementalCharge;
+		private int  _umbralHearts;
+		private int  _polyglots;
 		private bool _paradoxReady;
 
 		public override void PostUpdateMiscEffects()
 		{
+			if (GlobalCooldownTimer > 0)
+				GlobalCooldownTimer--;
+
+			foreach (Spell spell in SpellCooldowns.Keys.Where(spell => SpellCooldowns[spell] > 0))
+				SpellCooldowns[spell]--;
+
 			if (--MPTickTimer == 0)
 			{
 				MPTickTimer =  MPTickMaxTime;
@@ -115,14 +129,12 @@ namespace BlackMage
 			if (ElementalCharge == 0) return;
 
 			if (--ElementalChargeTimer == 0)
-			{
 				RemoveElementalStack();
-			}
 
 			if (--PolyglotTimer != 0) return;
 
-			Polyglots = Math.Min(Polyglots + 1, MaxPolyglots);
-			PolyglotTimer   = PolyglotMaxTime;
+			Polyglots     = Math.Min(Polyglots + 1, MaxPolyglots);
+			PolyglotTimer = PolyglotMaxTime;
 		}
 
 		public override void ResetEffects()
@@ -188,6 +200,11 @@ namespace BlackMage
 
 		public bool CastSpell(Spell spell)
 		{
+			if (!SpellCooldowns.ContainsKey(spell))
+				SpellCooldowns.Add(spell, 0);
+
+			if (GlobalCooldownTimer > 0 || SpellCooldowns[spell] > 0) return false;
+
 			int element = spell.ElementStack & Elements.ElementMask;
 			int stack   = spell.ElementStack & Elements.StackMask;
 			int mp;
@@ -243,6 +260,13 @@ namespace BlackMage
 					Polyglots--;
 					break;
 			}
+
+			SpellCooldowns[spell] = spell.Cooldown;
+
+			if (spell.GlobalCooldown)
+				GlobalCooldownTimer = GlobalCooldownMaxTime;
+
+			Projectile.NewProjectile(player.position, Vector2.Zero, spell.Projectile, spell.Potency, 0f, player.whoAmI);
 
 			return true;
 		}

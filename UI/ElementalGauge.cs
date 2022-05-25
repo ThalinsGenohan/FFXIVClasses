@@ -1,7 +1,9 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.GameContent.UI.Elements;
 using Terraria.ModLoader;
 using Terraria.UI;
@@ -10,42 +12,42 @@ namespace BlackMage.UI
 {
 	internal class ElementalGauge : UIState
 	{
-		private static readonly Texture2D BlankTexture = ModContent.GetTexture("BlackMage/UI/Blank");
+		private static readonly Asset<Texture2D> BlankTexture = ModContent.Request<Texture2D>("BlackMage/UI/Blank");
 
-		private static readonly Texture2D SimpleEmptyDiamondTexture =
-			ModContent.GetTexture("BlackMage/UI/ElementalGauge/Simple/EmptyDiamond");
+		private static readonly Asset<Texture2D> SimpleEmptyDiamondTexture =
+			ModContent.Request<Texture2D>("BlackMage/UI/ElementalGauge/Simple/EmptyDiamond");
 
-		private static readonly Texture2D SimpleFireDiamondTexture =
-			ModContent.GetTexture("BlackMage/UI/ElementalGauge/Simple/FireDiamond");
+		private static readonly Asset<Texture2D> SimpleFireDiamondTexture =
+			ModContent.Request<Texture2D>("BlackMage/UI/ElementalGauge/Simple/FireDiamond");
 
-		private static readonly Texture2D SimpleIceDiamondTexture =
-			ModContent.GetTexture("BlackMage/UI/ElementalGauge/Simple/IceDiamond");
+		private static readonly Asset<Texture2D> SimpleIceDiamondTexture =
+			ModContent.Request<Texture2D>("BlackMage/UI/ElementalGauge/Simple/IceDiamond");
 
-		private static readonly Texture2D SimpleHeartDiamondTexture =
-			ModContent.GetTexture("BlackMage/UI/ElementalGauge/Simple/HeartDiamond");
+		private static readonly Asset<Texture2D> SimpleHeartDiamondTexture =
+			ModContent.Request<Texture2D>("BlackMage/UI/ElementalGauge/Simple/HeartDiamond");
 
-		private static readonly Texture2D SimplePolyglotDiamondTexture =
-			ModContent.GetTexture("BlackMage/UI/ElementalGauge/Simple/PolyglotDiamond");
+		private static readonly Asset<Texture2D> SimplePolyglotDiamondTexture =
+			ModContent.Request<Texture2D>("BlackMage/UI/ElementalGauge/Simple/PolyglotDiamond");
 
-		private static readonly Texture2D SimplePolyglotBarFrameTexture =
-			ModContent.GetTexture("BlackMage/UI/ElementalGauge/Simple/PolyglotBarFrame");
+		private static readonly Asset<Texture2D> SimplePolyglotBarFrameTexture =
+			ModContent.Request<Texture2D>("BlackMage/UI/ElementalGauge/Simple/PolyglotBarFrame");
 
-		private static readonly Texture2D SimpleParadoxDiamondTexture =
-			ModContent.GetTexture("BlackMage/UI/ElementalGauge/Simple/ParadoxDiamond");
+		private static readonly Asset<Texture2D> SimpleParadoxDiamondTexture =
+			ModContent.Request<Texture2D>("BlackMage/UI/ElementalGauge/Simple/ParadoxDiamond");
 
 		private const float Scale       = 3f;
 		private const float DiamondSize = 7f * Scale;
 		private const float BarWidth    = 50f * Scale;
 
-		private static readonly Vector2 ElementStackPos = new Vector2(DiamondSize, DiamondSize * 2f);
+		private static readonly Vector2 ElementStackPos = new(DiamondSize, DiamondSize * 2f);
 
 		private static readonly Vector2 HeartPos =
 			ElementStackPos + new Vector2(DiamondSize * 3f + DiamondSize / (DiamondSize / Scale), 0f);
 
-		private static readonly Vector2 PolyglotBarPos = new Vector2(0f, DiamondSize);
-		private static readonly Vector2 PolyglotPos = PolyglotBarPos + new Vector2(BarWidth, 0f);
-		private static readonly Vector2 ParadoxPos = new Vector2(HeartPos.X - (float)Math.Floor(DiamondSize / 2f), 0f);
-		private static readonly Vector2 ElementCountdownPos = new Vector2(0f, DiamondSize * 2f);
+		private static readonly Vector2 PolyglotBarPos      = new(0f, DiamondSize);
+		private static readonly Vector2 PolyglotPos         = PolyglotBarPos + new Vector2(BarWidth, 0f);
+		private static readonly Vector2 ParadoxPos          = new(HeartPos.X - (float)Math.Floor(DiamondSize / 2f), 0f);
+		private static readonly Vector2 ElementCountdownPos = new(0f, DiamondSize * 2f);
 
 		private UIElement _area;
 		private UIImage[] _elementStacks;
@@ -195,9 +197,9 @@ namespace BlackMage.UI
 				hitbox.Height -= (int)(DiamondSize / (DiamondSize / Scale / 2f));
 
 				var steps = (int)((hitbox.Right - hitbox.Left) * quotient);
-				spriteBatch.Draw(Main.magicPixel,
-								 new Rectangle(hitbox.Left, hitbox.Y, steps, hitbox.Height),
-								 _polyglotColor);
+				spriteBatch.Draw(TextureAssets.MagicPixel.Value,
+				                 new Rectangle(hitbox.Left, hitbox.Y, steps, hitbox.Height),
+				                 _polyglotColor);
 			}
 			else
 			{

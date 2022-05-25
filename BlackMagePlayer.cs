@@ -25,7 +25,7 @@ namespace BlackMage
 		private static readonly float[] FireDamageMultList = { 0.7f, 0.8f, 0.9f, 1f, 1.4f, 1.6f, 1.8f };
 		private static readonly float[] IceDamageMultList  = { 1f, 1f, 1f, 1f, 0.9f, 0.8f, 0.7f };
 
-		public Dictionary<Spell, uint> SpellCooldowns { get; } = new Dictionary<Spell, uint>();
+		public Dictionary<Spell, uint> SpellCooldowns { get; } = new();
 
 		public float FireMPMult     => FireMPMultList[MaxElementStacks + (ElementalCharge > 0 ? 0 : ElementalCharge)];
 		public float IceMPMult      => IceMPMultList[ElementalCharge + MaxElementStacks];
@@ -194,7 +194,7 @@ namespace BlackMage
 		{
 			ElementalCharge      = 0;
 			UmbralHearts         = 0;
-			ElementalChargeTimer = ElementalChargeTimer;
+			ElementalChargeTimer = ElementalChargeMaxTime;
 			PolyglotTimer        = PolyglotMaxTime;
 		}
 
@@ -266,7 +266,7 @@ namespace BlackMage
 			if (spell.GlobalCooldown)
 				GlobalCooldownTimer = GlobalCooldownMaxTime;
 
-			Projectile.NewProjectile(player.position, Vector2.Zero, spell.Projectile, spell.Potency, 0f, player.whoAmI);
+			Projectile.NewProjectile(Player.GetSource_Misc("spell"), Player.position, Vector2.Zero, spell.Projectile, spell.Potency, 0f);
 
 			return true;
 		}

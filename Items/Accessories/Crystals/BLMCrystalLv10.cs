@@ -22,11 +22,11 @@ namespace BlackMage.Items.Accessories.Crystals
 
 		public override void SetDefaults()
 		{
-			item.width     = 20;
-			item.height    = 20;
-			item.accessory = true;
-			item.value     = Item.sellPrice(gold: 10);
-			item.rare      = ItemRarityID.Purple;
+			Item.width     = 20;
+			Item.height    = 20;
+			Item.accessory = true;
+			Item.value     = Item.sellPrice(gold: 10);
+			Item.rare      = ItemRarityID.Purple;
 		}
 
 		public override void UpdateAccessory(Player player, bool hideVisual)

@@ -7,7 +7,7 @@ using Terraria.UI;
 
 namespace BlackMage
 {
-	public class BlackMage : Mod
+	public class BlackMage : ModSystem
 	{
 		internal MPBar          MPBar          { get; private set; }
 		internal ElementalGauge ElementalGauge { get; private set; }

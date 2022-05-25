@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.GameContent.UI.Elements;
 using Terraria.ModLoader;
 using Terraria.UI;
@@ -23,7 +24,7 @@ namespace BlackMage.UI
 			_area.Width.Set(182f, 0f);
 			_area.Height.Set(60f, 0f);
 
-			_barFrame = new UIImage(ModContent.GetTexture("BlackMage/UI/MPBarFrame"));
+			_barFrame = new UIImage(ModContent.Request<Texture2D>("BlackMage/UI/MPBarFrame"));
 			_barFrame.Left.Set(22f, 0f);
 			_barFrame.Top.Set(0f, 0f);
 			_barFrame.Width.Set(138f, 0f);
@@ -83,7 +84,7 @@ namespace BlackMage.UI
 			for (var i = 0; i < steps; i++)
 			{
 				float percent = 1f / (right - left);
-				spriteBatch.Draw(Main.magicPixel,
+				spriteBatch.Draw(TextureAssets.MagicPixel.Value,
 				                 new Rectangle(left + i, hitbox.Y, 1, hitbox.Height),
 				                 Color.Lerp(_gradientA, _gradientB, percent));
 			}

@@ -5,12 +5,12 @@ namespace BlackMage
 {
 	internal static class Spells
 	{
-		public static Spell Blizzard = new Spell("Blizzard", 180, 400, ModContent.ProjectileType<BlizzardProj>)
+		public static Spell Blizzard = new("Blizzard", 180, 400, ModContent.ProjectileType<BlizzardProj>)
 		{
 			ElementStack = Elements.IceElement | Elements.OneStack,
 		};
 
-		public static Spell Fire = new Spell("Fire", 180, 800, ModContent.ProjectileType<FireProj>)
+		public static Spell Fire = new("Fire", 180, 800, ModContent.ProjectileType<FireProj>)
 		{
 			ElementStack = Elements.FireElement | Elements.OneStack,
 		};
@@ -20,7 +20,7 @@ namespace BlackMage
 			ElementStack = Elements.IceElement | Elements.FullStack,
 		};*/
 
-		public static Spell Scathe = new Spell("Scathe", 100, 800, ModContent.ProjectileType<ScatheProj>);
+		public static Spell Scathe = new("Scathe", 100, 800, ModContent.ProjectileType<ScatheProj>);
 
 		/*public static Spell Fire2 = new Spell("Fire II", 100, 1500, ModContent.ProjectileType<Fire2Proj>)
 		{

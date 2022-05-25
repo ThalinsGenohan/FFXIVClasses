@@ -18,11 +18,11 @@ namespace BlackMage.Items.Accessories.Crystals
 
 		public override void SetDefaults()
 		{
-			item.width     = 20;
-			item.height    = 20;
-			item.accessory = true;
-			item.value     = Item.sellPrice(gold: 10);
-			item.rare      = ItemRarityID.Purple;
+			Item.width     = 20;
+			Item.height    = 20;
+			Item.accessory = true;
+			Item.value     = Item.sellPrice(gold: 10);
+			Item.rare      = ItemRarityID.Purple;
 		}
 
 		public override void UpdateAccessory(Player player, bool hideVisual)
@@ -32,13 +32,9 @@ namespace BlackMage.Items.Accessories.Crystals
 
 		public override int ChoosePrefix(UnifiedRandom rand) => 0;
 
-		public override void AddRecipes()
-		{
-			var recipe = new ModRecipe(mod);
-			recipe.AddIngredient(ModContent.ItemType<BLMCrystalLv60>());
-			recipe.AddIngredient(ItemID.Ectoplasm);
-			recipe.SetResult(this);
-			recipe.AddRecipe();
-		}
+		public override void AddRecipes() => CreateRecipe()
+		                                     .AddIngredient(ModContent.ItemType<BLMCrystalLv60>())
+		                                     .AddIngredient(ItemID.Ectoplasm)
+		                                     .Register();
 	}
 }

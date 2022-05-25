@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.GameContent.UI.Elements;
 using Terraria.ModLoader;
@@ -38,14 +39,19 @@ namespace BlackMage.UI
 			foreach (FieldInfo fieldInfo in typeof(Spells).GetFields())
 			{
 				var spell = (Spell)fieldInfo.GetValue(null);
-				_buttons.Add(spell, new UIImageButton(ModContent.GetTexture("BlackMage/UI/Spells/" + spell.Name)));
-				_buttons[spell].OnMouseUp += (evt, element) => CastSpell(spell);
-				_buttons[spell].Top.Set(0f, 0f);
-				_buttons[spell].Left.Set((IconSize + Padding) * i, 0f);
-				_buttons[spell].Width.Set(IconSize, 0f);
-				_buttons[spell].Height.Set(IconSize, 0f);
+				if (spell != null)
+				{
+					_buttons.Add(spell,
+					             new UIImageButton(ModContent.Request<Texture2D>("BlackMage/UI/Spells/" + spell.Name)));
+					_buttons[spell].OnMouseUp += (_, _) => CastSpell(spell);
+					_buttons[spell].Top.Set(0f, 0f);
+					_buttons[spell].Left.Set((IconSize + Padding) * i, 0f);
+					_buttons[spell].Width.Set(IconSize, 0f);
+					_buttons[spell].Height.Set(IconSize, 0f);
 
-				_area.Append(_buttons[spell]);
+					_area.Append(_buttons[spell]);
+				}
+
 				i++;
 			}
 		}

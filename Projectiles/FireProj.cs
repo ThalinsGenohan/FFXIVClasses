@@ -12,19 +12,19 @@ namespace BlackMage.Projectiles
 		public override void SetStaticDefaults()
 		{
 			DisplayName.SetDefault("Fire");
-			ProjectileID.Sets.Homing[projectile.type] = true;
-			ProjectileID.Sets.MinionTargettingFeature[projectile.type] = true;
+			//ProjectileID.Sets.Homing[Projectile.type] = true;
+			ProjectileID.Sets.MinionTargettingFeature[Projectile.type] = true;
 		}
 
 		public override void SetDefaults()
 		{
-			projectile.width = Spell.SingleTargetSize;
-			projectile.height = Spell.SingleTargetSize;
-			projectile.friendly = true;
-			projectile.magic = true;
-			projectile.light = 0.5f;
-			projectile.knockBack = 0f;
-			projectile.tileCollide = false;
+			Projectile.width       = Spell.SingleTargetSize;
+			Projectile.height      = Spell.SingleTargetSize;
+			Projectile.friendly    = true;
+			Projectile.DamageType  = DamageClass.Magic;
+			Projectile.light       = 0.5f;
+			Projectile.knockBack   = 0f;
+			Projectile.tileCollide = false;
 		}
 
 		public override bool? CanHitNPC(NPC target) => _target?.whoAmI == target.whoAmI;
@@ -36,14 +36,14 @@ namespace BlackMage.Projectiles
 
 		public override void AI()
 		{
-			Player player = Main.player[projectile.owner];
-			Vector2 targetCenter = projectile.position;
+			Player player = Main.player[Projectile.owner];
+			Vector2 targetCenter = Projectile.position;
 			var foundTarget = false;
 			
 			if (player.HasMinionAttackTargetNPC)
 			{
 				NPC npc = Main.npc[player.MinionAttackTargetNPC];
-				float between = Vector2.Distance(npc.Center, projectile.Center);
+				float between = Vector2.Distance(npc.Center, Projectile.Center);
 				if (between < 2000f)
 				{
 					targetCenter = npc.Center;
@@ -59,8 +59,8 @@ namespace BlackMage.Projectiles
 					NPC npc = Main.npc[i];
 					if (!npc.CanBeChasedBy()) continue;
 
-					float npcDistance = Vector2.Distance(npc.Center, projectile.Center);
-					bool closest = Vector2.Distance(projectile.Center, targetCenter) > npcDistance;
+					float npcDistance = Vector2.Distance(npc.Center, Projectile.Center);
+					bool closest = Vector2.Distance(Projectile.Center, targetCenter) > npcDistance;
 
 					if (!closest && foundTarget) continue;
 
@@ -71,19 +71,19 @@ namespace BlackMage.Projectiles
 			}
 			if (!foundTarget)
 			{
-				projectile.Kill();
+				Projectile.Kill();
 				return;
 			}
 
 			const float speed = 24f;
 			const float inertia = 8f;
 			
-			if (!(Vector2.Distance(projectile.Center, targetCenter) > 40f)) return;
+			if (!(Vector2.Distance(Projectile.Center, targetCenter) > 40f)) return;
 			
-			Vector2 direction = targetCenter - projectile.Center;
+			Vector2 direction = targetCenter - Projectile.Center;
 			direction.Normalize();
 			direction *= speed;
-			projectile.velocity = (projectile.velocity * (inertia - 1) + direction) / inertia;
+			Projectile.velocity = (Projectile.velocity * (inertia - 1) + direction) / inertia;
 		}
 	}
 }

@@ -35,8 +35,8 @@ namespace BlackMage.UI
 			_text.Top.Set(40f, 0f);
 			_text.Left.Set(0f, 0f);
 
-			_gradientA = new Color(123, 25, 138);
-			_gradientB = new Color(187, 91, 201);
+			_gradientA = Constants.Colors.MPDark;
+			_gradientB = Constants.Colors.MPLight;
 
 			_area.Append(_text);
 			_area.Append(_barFrame);
@@ -85,7 +85,7 @@ namespace BlackMage.UI
 				float percent = 1f / (right - left);
 				spriteBatch.Draw(Main.magicPixel,
 				                 new Rectangle(left + i, hitbox.Y, 1, hitbox.Height),
-				                 Color.Lerp(_gradientA, _gradientB, percent));
+				                 Color.Lerp(_gradientA, _gradientB, i / (float)(right - left)));
 			}
 		}
 	}

@@ -35,7 +35,7 @@ namespace BlackMage.Projectiles
 		public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
 		{
 			damage = Spells.Scathe.Potency;
-			if (Main.rand.Next(4) == 0)
+			if (Main.rand.NextBool(4))
 				damage += Spells.Scathe.Potency;
 		}
 

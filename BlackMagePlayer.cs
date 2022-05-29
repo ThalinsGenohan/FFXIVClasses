@@ -58,6 +58,50 @@ namespace BlackMage
 
 		public bool CanUseParadox => SoulCrystalLevel >= 90;
 
+		public List<int> CastableSpells
+		{
+			get
+			{
+				var list = new List<int>();
+
+				if (SoulCrystalLevel >= 10)
+				{
+					list.Add(ModContent.ProjectileType<Fire>());
+					list.Add(ModContent.ProjectileType<Blizzard>());
+				}
+				if (SoulCrystalLevel >= 20)
+				{
+					list.Add(ModContent.ProjectileType<Fire2>());
+					list.Add(ModContent.ProjectileType<Blizzard2>());
+				}
+				if (SoulCrystalLevel >= 35)
+				{
+					list.Add(ModContent.ProjectileType<Fire3>());
+					list.Add(ModContent.ProjectileType<Blizzard3>());
+				}
+				if (SoulCrystalLevel >= 50)
+				{
+					list.Add(ModContent.ProjectileType<Flare>());
+					list.Add(ModContent.ProjectileType<Freeze>());
+				}
+				if (SoulCrystalLevel >= 60)
+				{
+					list.Add(ModContent.ProjectileType<Fire4>());
+					list.Add(ModContent.ProjectileType<Blizzard4>());
+				}
+				if (SoulCrystalLevel >= 70)
+					list.Add(ModContent.ProjectileType<Foul>());
+				if (SoulCrystalLevel >= 75)
+					list.Add(ModContent.ProjectileType<Despair>());
+				if (SoulCrystalLevel >= 80)
+					list.Add(ModContent.ProjectileType<Xenoglossy>());
+				if (SoulCrystalLevel >= 90)
+					list.Add(ModContent.ProjectileType<Paradox>());
+				
+				return list;
+			}
+		}
+
 		public int SoulCrystalLevel { get; set; }
 
 		public int MP
@@ -211,6 +255,7 @@ namespace BlackMage
 			int element = spellData.ElementStack & Elements.ElementMask;
 			int stack   = spellData.ElementStack & Elements.StackMask;
 			int mp;
+			int damage = Spell.Data[spellId].Potency;
 
 			switch (element)
 			{
@@ -233,6 +278,7 @@ namespace BlackMage
 					if (AstralFire > 0)
 						UmbralHearts -= stack == Elements.HeartStack ? UmbralHearts : 1;
 
+					damage = (int)(damage * FireDamageMult);
 					break;
 				case Elements.IceElement:
 					if (spellData.StackRequired && UmbralIce == 0) return false;
@@ -245,6 +291,7 @@ namespace BlackMage
 					if (stack == Elements.HeartStack)
 						UmbralHearts = MaxUmbralHearts;
 
+					damage = (int)(damage * IceDamageMult);
 					break;
 				case Elements.ParadoxElement:
 					if (!ParadoxReady) return false;
@@ -269,7 +316,7 @@ namespace BlackMage
 			if (spellData.GlobalCooldown)
 				GlobalCooldownTimer = GlobalCooldownMaxTime;
 
-			Projectile.NewProjectile(player.position, Vector2.Zero, spellId, 1, 0f, player.whoAmI);
+			Projectile.NewProjectile(player.position, Vector2.Zero, spellId, damage, 0f, player.whoAmI);
 
 			return true;
 		}

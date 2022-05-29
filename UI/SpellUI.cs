@@ -44,6 +44,20 @@ namespace BlackMage.UI
 
 			_cooldownText.SetText(blm.GlobalCooldownTimer.ToString());
 
+			List<int> spells        = blm.CastableSpells;
+			var       activeButtons = 0;
+			foreach (KeyValuePair<int, UIImageButton> buttonPair in _buttons)
+			{
+				if (spells.Contains(buttonPair.Key))
+				{
+					buttonPair.Value.Activate();
+					activeButtons++;
+				}
+				else
+					buttonPair.Value.Deactivate();
+			}
+			_area.Width.Set((IconSize + Padding) * activeButtons, 0f);
+
 			base.Update(gameTime);
 		}
 
@@ -55,6 +69,9 @@ namespace BlackMage.UI
 			{
 				int             spellId   = spellDataPair.Key;
 				Spell.SpellData spellData = spellDataPair.Value;
+
+				if (spellData.SpellName == "Scathe")
+					continue;
 
 				_buttons.Add(spellId,
 				             new UIImageButton(ModContent.GetTexture("BlackMage/UI/Spells/" + spellData.SpellName)));

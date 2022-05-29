@@ -82,7 +82,6 @@ namespace BlackMage.UI
 			var steps = (int)((right - left) * quotient);
 			for (var i = 0; i < steps; i++)
 			{
-				float percent = 1f / (right - left);
 				spriteBatch.Draw(Main.magicPixel,
 				                 new Rectangle(left + i, hitbox.Y, 1, hitbox.Height),
 				                 Color.Lerp(_gradientA, _gradientB, i / (float)(right - left)));

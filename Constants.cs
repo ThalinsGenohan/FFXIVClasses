@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Microsoft.Xna.Framework;
 using Terraria;
 
 namespace BlackMage
@@ -16,19 +18,34 @@ namespace BlackMage
 			public static readonly Color Polyglot  = new Color(0x60, 0x46, 0x88);
 		}
 
+		internal static string ReplaceKeywords(string inStr)
+		{
+			return Keywords.Aggregate(inStr, (current, keyword) => current.Replace(keyword.Key, keyword.Value));
+		}
+
+		internal static Dictionary<string, string> Keywords = new Dictionary<string, string>()
+		{
+			{ "[Fire]", $"[c/{Colors.Fire.Hex3()}:Fire]" },
+			{ "[Fira]", $"[c/{Colors.Fire.Hex3()}:Fira]" },
+			{ "[Firaga]", $"[c/{Colors.Fire.Hex3()}:Firaga]" },
+			{ "[Firaja]", $"[c/{Colors.Fire.Hex3()}:Firaja]" },
+			{ "[Flare]", $"[c/{Colors.Fire.Hex3()}:Flare]" },
+			{ "[Despair]", $"[c/{Colors.Fire.Hex3()}:Despair]" },
+		};
+
 		internal static class Strings
 		{
 			public static readonly string Fire1   = $"[c/{Colors.Fire.Hex3()}:Fire]";
-			public static readonly string Fire2   = $"[c/{Colors.Fire.Hex3()}:Fire II]";
-			public static readonly string Fire3   = $"[c/{Colors.Fire.Hex3()}:Fire III]";
-			public static readonly string Fire4   = $"[c/{Colors.Fire.Hex3()}:Fire IV]";
+			public static readonly string Fire2   = $"[c/{Colors.Fire.Hex3()}:Fira]";
+			public static readonly string Fire3   = $"[c/{Colors.Fire.Hex3()}:Firaga]";
+			public static readonly string Fire4   = $"[c/{Colors.Fire.Hex3()}:Firaja]";
 			public static readonly string Flare   = $"[c/{Colors.Fire.Hex3()}:Flare]";
 			public static readonly string Despair = $"[c/{Colors.Fire.Hex3()}:Despair]";
 
 			public static readonly string Blizzard1 = $"[c/{Colors.Ice.Hex3()}:Blizzard]";
-			public static readonly string Blizzard2 = $"[c/{Colors.Ice.Hex3()}:Blizzard II]";
-			public static readonly string Blizzard3 = $"[c/{Colors.Ice.Hex3()}:Blizzard III]";
-			public static readonly string Blizzard4 = $"[c/{Colors.Ice.Hex3()}:Blizzard IV]";
+			public static readonly string Blizzard2 = $"[c/{Colors.Ice.Hex3()}:Blizzara]";
+			public static readonly string Blizzard3 = $"[c/{Colors.Ice.Hex3()}:Blizzaga]";
+			public static readonly string Blizzard4 = $"[c/{Colors.Ice.Hex3()}:Blizzaja]";
 			public static readonly string Freeze    = $"[c/{Colors.Ice.Hex3()}:Freeze]";
 
 			public static readonly string Foul       = $"[c/{Colors.Polyglot.Hex3()}:Foul]";

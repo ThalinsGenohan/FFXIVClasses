@@ -32,7 +32,7 @@ namespace BlackMage.Items.Weapons
 			item.mana         = 1;
 			item.damage       = 180;
 			item.noMelee      = true;
-			item.shoot        = ModContent.ProjectileType<ScatheProj>();
+			item.shoot        = ModContent.ProjectileType<Scathe>();
 		}
 
 		public override bool Shoot(Player player,
@@ -43,9 +43,8 @@ namespace BlackMage.Items.Weapons
 		                           ref int damage,
 		                           ref float knockBack)
 		{
-			if (player.HasMinionAttackTargetNPC) return false;
-
-			return base.Shoot(player, ref position, ref speedX, ref speedY, ref type, ref damage, ref knockBack);
+			return !player.HasMinionAttackTargetNPC &&
+			       base.Shoot(player, ref position, ref speedX, ref speedY, ref type, ref damage, ref knockBack);
 		}
 	}
 }

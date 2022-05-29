@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using BlackMage.Projectiles;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
@@ -19,15 +20,15 @@ namespace BlackMage
 		public const int MaxUmbralHearts  = 3;
 		public const int MaxPolyglots     = 2;
 
-		private static readonly int[]   MPRegenRate        = { 6200, 4700, 3200, 200, 0, 0, 0 };
-		private static readonly float[] FireMPMultList     = { 0f, 0f, 0f, 1f, 2f, 2f, 2f };
-		private static readonly float[] IceMPMultList      = { 0f, 0.5f, 0.75f, 1f, 0f, 0f, 0f };
-		private static readonly float[] FireDamageMultList = { 0.7f, 0.8f, 0.9f, 1f, 1.4f, 1.6f, 1.8f };
-		private static readonly float[] IceDamageMultList  = { 1f, 1f, 1f, 1f, 0.9f, 0.8f, 0.7f };
+		public static int[]   MPRegenRate        { get; } = { 6200, 4700, 3200, 200, 0, 0, 0 };
+		public static float[] FireMPMultList     { get; } = { 0f, 0f, 0f, 1f, 2f, 2f, 2f };
+		public static float[] IceMPMultList      { get; } = { 0f, 0.5f, 0.75f, 1f, 0f, 0f, 0f };
+		public static float[] FireDamageMultList { get; } = { 0.7f, 0.8f, 0.9f, 1f, 1.4f, 1.6f, 1.8f };
+		public static float[] IceDamageMultList  { get; } = { 1f, 1f, 1f, 1f, 0.9f, 0.8f, 0.7f };
 
-		public Dictionary<Spell, uint> SpellCooldowns { get; } = new Dictionary<Spell, uint>();
+		public Dictionary<int, uint> SpellCooldowns { get; } = new Dictionary<int, uint>();
 
-		public float FireMPMult     => FireMPMultList[MaxElementStacks + (ElementalCharge > 0 ? 0 : ElementalCharge)];
+		public float FireMPMult     => FireMPMultList[ElementalCharge + MaxElementStacks];
 		public float IceMPMult      => IceMPMultList[ElementalCharge + MaxElementStacks];
 		public float FireDamageMult => FireDamageMultList[ElementalCharge + MaxElementStacks];
 		public float IceDamageMult  => IceDamageMultList[ElementalCharge + MaxElementStacks];
@@ -117,8 +118,8 @@ namespace BlackMage
 			if (GlobalCooldownTimer > 0)
 				GlobalCooldownTimer--;
 
-			foreach (Spell spell in SpellCooldowns.Keys.Where(spell => SpellCooldowns[spell] > 0))
-				SpellCooldowns[spell]--;
+			foreach (int spellId in SpellCooldowns.Keys.Where(spell => SpellCooldowns[spell] > 0))
+				SpellCooldowns[spellId]--;
 
 			if (--MPTickTimer == 0)
 			{
@@ -198,47 +199,49 @@ namespace BlackMage
 			PolyglotTimer        = PolyglotMaxTime;
 		}
 
-		public bool CastSpell(Spell spell)
+		public bool CastSpell(int spellId)
 		{
-			if (!SpellCooldowns.ContainsKey(spell))
-				SpellCooldowns.Add(spell, 0);
+			if (!SpellCooldowns.ContainsKey(spellId))
+				SpellCooldowns.Add(spellId, 0);
 
-			if (GlobalCooldownTimer > 0 || SpellCooldowns[spell] > 0) return false;
+			if (GlobalCooldownTimer > 0 || SpellCooldowns[spellId] > 0) return false;
 
-			int element = spell.ElementStack & Elements.ElementMask;
-			int stack   = spell.ElementStack & Elements.StackMask;
+			Spell.SpellData spellData = Spell.Data[spellId];
+
+			int element = spellData.ElementStack & Elements.ElementMask;
+			int stack   = spellData.ElementStack & Elements.StackMask;
 			int mp;
 
 			switch (element)
 			{
 				case Elements.FireElement:
-					if (spell.StackRequired && AstralFire == 0) return false;
+					if (spellData.StackRequired && AstralFire == 0) return false;
 
-					if (spell.MPCost == -1)
+					if (spellData.MPCost == -1)
 					{
 						if (MP < 800) return false;
 						mp = MP / (stack == Elements.HeartStack && UmbralHearts > 0 ? 3 : 1);
 					}
 					else
 					{
-						mp = (int)(spell.MPCost * FireMPMult);
+						mp = (int)(spellData.MPCost * FireMPMult);
 						if (MP < mp) return false;
 					}
 
 					MP -= mp;
-					AddElementalStack(spell.ElementStack);
+					AddElementalStack(spellData.ElementStack);
 					if (AstralFire > 0)
 						UmbralHearts -= stack == Elements.HeartStack ? UmbralHearts : 1;
 
 					break;
 				case Elements.IceElement:
-					if (spell.StackRequired && UmbralIce == 0) return false;
+					if (spellData.StackRequired && UmbralIce == 0) return false;
 
-					mp = (int)(spell.MPCost * IceMPMult);
+					mp = (int)(spellData.MPCost * IceMPMult);
 					if (MP < mp) return false;
 
 					MP -= mp;
-					AddElementalStack(spell.ElementStack);
+					AddElementalStack(spellData.ElementStack);
 					if (stack == Elements.HeartStack)
 						UmbralHearts = MaxUmbralHearts;
 
@@ -246,7 +249,7 @@ namespace BlackMage
 				case Elements.ParadoxElement:
 					if (!ParadoxReady) return false;
 
-					mp = UmbralIce > 0 ? 0 : spell.MPCost;
+					mp = UmbralIce > 0 ? 0 : spellData.MPCost;
 
 					if (MP < mp) return false;
 
@@ -261,12 +264,12 @@ namespace BlackMage
 					break;
 			}
 
-			SpellCooldowns[spell] = spell.Cooldown;
+			SpellCooldowns[spellId] = spellData.Cooldown;
 
-			if (spell.GlobalCooldown)
+			if (spellData.GlobalCooldown)
 				GlobalCooldownTimer = GlobalCooldownMaxTime;
 
-			Projectile.NewProjectile(player.position, Vector2.Zero, spell.Projectile, spell.Potency, 0f, player.whoAmI);
+			Projectile.NewProjectile(player.position, Vector2.Zero, spellId, 1, 0f, player.whoAmI);
 
 			return true;
 		}

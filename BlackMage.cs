@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using BlackMage.UI;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -38,39 +39,43 @@ namespace BlackMage
 
 		public override void UpdateUI(GameTime gameTime)
 		{
-			if (!Main.dedServ)
+			if (Main.dedServ)
+				return;
+
+			Player player = Main.LocalPlayer;
+			var    blm    = player.GetModPlayer<BlackMagePlayer>();
+
+			if (blm.SoulCrystalLevel == 0)
 			{
-				Player player = Main.LocalPlayer;
-				var blm    = player.GetModPlayer<BlackMagePlayer>();
-
-				if (blm.SoulCrystalLevel == 0)
-				{
-					if (_mpBarUI.CurrentState != null)
-						_mpBarUI.SetState(null);
-					if (_elementalGaugeUI.CurrentState != null)
-						_elementalGaugeUI.SetState(null);
-					if (_spellUI.CurrentState != null)
-						_spellUI.SetState(null);
-				}
-				else
-				{
-					if (_mpBarUI.CurrentState == null)
-						_mpBarUI.SetState(MPBar);
-					if (_elementalGaugeUI.CurrentState == null)
-						_elementalGaugeUI.SetState(ElementalGauge);
-					if (player.HasMinionAttackTargetNPC)
-					{
-						if (_spellUI.CurrentState == null)
-							_spellUI.SetState(SpellUI);
-					}
-					else if (_spellUI.CurrentState != null)
-						_spellUI.SetState(null);
-				}
-
-				_mpBarUI.Update(gameTime);
-				_elementalGaugeUI.Update(gameTime);
-				_spellUI.Update(gameTime);
+				if (_mpBarUI.CurrentState != null)
+					_mpBarUI.SetState(null);
+				if (_elementalGaugeUI.CurrentState != null)
+					_elementalGaugeUI.SetState(null);
+				if (_spellUI.CurrentState != null)
+					_spellUI.SetState(null);
 			}
+			else
+			{
+				if (_mpBarUI.CurrentState == null)
+					_mpBarUI.SetState(MPBar);
+				if (_elementalGaugeUI.CurrentState == null)
+					_elementalGaugeUI.SetState(ElementalGauge);
+				if (player.HasMinionAttackTargetNPC)
+				{
+					if (_spellUI.CurrentState == null)
+						_spellUI.SetState(SpellUI);
+
+					var spellUI = (SpellUI)_spellUI.CurrentState;
+					if (spellUI.ButtonCount == 0)
+						spellUI.RefreshSpells();
+				}
+				else if (_spellUI.CurrentState != null)
+					_spellUI.SetState(null);
+			}
+
+			_mpBarUI.Update(gameTime);
+			_elementalGaugeUI.Update(gameTime);
+			_spellUI.Update(gameTime);
 		}
 
 		public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers)

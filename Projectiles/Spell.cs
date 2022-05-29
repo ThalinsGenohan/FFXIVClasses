@@ -28,9 +28,11 @@ namespace BlackMage.Projectiles
 		}
 
 		public const int SingleTargetSize = 5;
-		public const int AoESize          = 40;
+		public const int AoESize          = 80;
 
 		protected NPC Target;
+
+		protected virtual bool AoE => false;
 
 		public override void SetStaticDefaults()
 		{
@@ -41,23 +43,36 @@ namespace BlackMage.Projectiles
 
 		public override void SetDefaults()
 		{
-			projectile.width       = SingleTargetSize;
-			projectile.height      = SingleTargetSize;
+			projectile.width       = AoE ? AoESize : SingleTargetSize;
+			projectile.height      = AoE ? AoESize : SingleTargetSize;
 			projectile.friendly    = true;
 			projectile.magic       = true;
 			projectile.knockBack   = 0f;
 			projectile.tileCollide = false;
+			projectile.penetrate   = AoE ? -1 : 1;
+			projectile.timeLeft    = 120;
 		}
 
-		public override bool? CanHitNPC(NPC target) => Target?.whoAmI == target.whoAmI;
+		public override bool? CanHitNPC(NPC target)
+		{
+			if (AoE)
+				return true;
 
+			return Target?.whoAmI == target.whoAmI;
+		}
+		
 		public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
 		{
-			damage += Data[projectile.type].Potency;
+			crit = false;
 		}
-
+		
 		public override void AI()
 		{
+			if (AoE && Target != null)
+			{
+				return;
+			}
+
 			Player  player       = Main.player[projectile.owner];
 			Vector2 targetCenter = projectile.position;
 			var     foundTarget  = false;
@@ -79,12 +94,15 @@ namespace BlackMage.Projectiles
 				projectile.Kill();
 				return;
 			}
-			projectile.position = targetCenter;
+
+			projectile.Center = targetCenter;
 		}
 	}
 
 	internal class Blizzard : Spell
 	{
+		protected override bool AoE => false;
+
 		public override void   SetStaticDefaults()
 		{
 			Data[projectile.type]                = new SpellData
@@ -102,6 +120,8 @@ namespace BlackMage.Projectiles
 	}
 	internal class Fire : Spell
 	{
+		protected override bool AoE => false;
+
 		public override void SetStaticDefaults()
 		{
 			Data[projectile.type]                = new SpellData
@@ -170,6 +190,8 @@ namespace BlackMage.Projectiles
 	}
 	internal class Blizzard2 : Spell
 	{
+		protected override bool AoE => true;
+
 		public override void SetStaticDefaults()
 		{
 			Data[projectile.type]                = new SpellData
@@ -187,6 +209,8 @@ namespace BlackMage.Projectiles
 	}
 	internal class Scathe : Spell
 	{
+		protected override bool AoE => false;
+
 		public override void SetStaticDefaults()
 		{
 			Data[projectile.type]                = new SpellData
@@ -201,9 +225,18 @@ namespace BlackMage.Projectiles
 			};
 			base.SetStaticDefaults();
 		}
+
+		public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+		{
+			crit = Main.rand.NextBool(5);
+			if (crit)
+				damage *= 2;
+		}
 	}
 	internal class Fire2 : Spell
 	{
+		protected override bool AoE => true;
+
 		public override void SetStaticDefaults()
 		{
 			Data[projectile.type]                = new SpellData
@@ -214,6 +247,196 @@ namespace BlackMage.Projectiles
 				Cooldown       = 0,
 				GlobalCooldown = true,
 				ElementStack   = Elements.FireElement | Elements.FullStack,
+				StackRequired  = false,
+			};
+			base.SetStaticDefaults();
+		}
+	}
+	internal class Fire3 : Spell
+	{
+		protected override bool AoE => false;
+
+		public override void SetStaticDefaults()
+		{
+			Data[projectile.type] = new SpellData
+			{
+				SpellName      = "Firaga",
+				Potency        = 260,
+				MPCost         = 2000,
+				Cooldown       = 0,
+				GlobalCooldown = true,
+				ElementStack   = Elements.FireElement | Elements.FullStack,
+				StackRequired  = false,
+			};
+			base.SetStaticDefaults();
+		}
+	}
+	internal class Blizzard3 : Spell
+	{
+		protected override bool AoE => false;
+
+		public override void SetStaticDefaults()
+		{
+			Data[projectile.type] = new SpellData
+			{
+				SpellName      = "Blizzaga",
+				Potency        = 260,
+				MPCost         = 800,
+				Cooldown       = 0,
+				GlobalCooldown = true,
+				ElementStack   = Elements.IceElement | Elements.FullStack,
+				StackRequired  = false,
+			};
+			base.SetStaticDefaults();
+		}
+	}
+	internal class Freeze : Spell
+	{
+		protected override bool AoE => true;
+
+		public override void SetStaticDefaults()
+		{
+			Data[projectile.type] = new SpellData
+			{
+				SpellName      = "Freeze",
+				Potency        = 120,
+				MPCost         = 1000,
+				Cooldown       = 0,
+				GlobalCooldown = true,
+				ElementStack   = Elements.IceElement | Elements.HeartStack,
+				StackRequired  = true,
+			};
+			base.SetStaticDefaults();
+		}
+	}
+	internal class Flare : Spell
+	{
+		protected override bool AoE => true;
+
+		public override void SetStaticDefaults()
+		{
+			Data[projectile.type] = new SpellData
+			{
+				SpellName      = "Flare",
+				Potency        = 220,
+				MPCost         = -1,
+				Cooldown       = 0,
+				GlobalCooldown = true,
+				ElementStack   = Elements.FireElement | Elements.HeartStack,
+				StackRequired  = true,
+			};
+			base.SetStaticDefaults();
+		}
+	}
+	internal class Blizzard4 : Spell
+	{
+		protected override bool AoE => false;
+
+		public override void SetStaticDefaults()
+		{
+			Data[projectile.type] = new SpellData
+			{
+				SpellName      = "Blizzaja",
+				Potency        = 310,
+				MPCost         = 800,
+				Cooldown       = 0,
+				GlobalCooldown = true,
+				ElementStack   = Elements.IceElement | Elements.HeartStack,
+				StackRequired  = true,
+			};
+			base.SetStaticDefaults();
+		}
+	}
+	internal class Fire4 : Spell
+	{
+		protected override bool AoE => false;
+
+		public override void SetStaticDefaults()
+		{
+			Data[projectile.type] = new SpellData
+			{
+				SpellName      = "Firaja",
+				Potency        = 310,
+				MPCost         = 800,
+				Cooldown       = 0,
+				GlobalCooldown = true,
+				ElementStack   = Elements.FireElement | Elements.NoStack,
+				StackRequired  = true,
+			};
+			base.SetStaticDefaults();
+		}
+	}
+	internal class Foul : Spell
+	{
+		protected override bool AoE => true;
+
+		public override void SetStaticDefaults()
+		{
+			Data[projectile.type] = new SpellData
+			{
+				SpellName      = "Foul",
+				Potency        = 560,
+				MPCost         = 0,
+				Cooldown       = 0,
+				GlobalCooldown = true,
+				ElementStack   = Elements.PolyglotElement | Elements.NoStack,
+				StackRequired  = false,
+			};
+			base.SetStaticDefaults();
+		}
+	}
+	internal class Despair : Spell
+	{
+		protected override bool AoE => false;
+
+		public override void SetStaticDefaults()
+		{
+			Data[projectile.type] = new SpellData
+			{
+				SpellName      = "Despair",
+				Potency        = 340,
+				MPCost         = -1,
+				Cooldown       = 0,
+				GlobalCooldown = true,
+				ElementStack   = Elements.FireElement | Elements.FullStack,
+				StackRequired  = true,
+			};
+			base.SetStaticDefaults();
+		}
+	}
+	internal class Xenoglossy : Spell
+	{
+		protected override bool AoE => false;
+
+		public override void SetStaticDefaults()
+		{
+			Data[projectile.type] = new SpellData
+			{
+				SpellName      = "Xenoglossy",
+				Potency        = 760,
+				MPCost         = 0,
+				Cooldown       = 0,
+				GlobalCooldown = true,
+				ElementStack   = Elements.PolyglotElement | Elements.NoStack,
+				StackRequired  = false,
+			};
+			base.SetStaticDefaults();
+		}
+	}
+	internal class Paradox : Spell
+	{
+		protected override bool AoE => false;
+
+		public override void SetStaticDefaults()
+		{
+			Data[projectile.type] = new SpellData
+			{
+				SpellName      = "Paradox",
+				Potency        = 500,
+				MPCost         = 0,
+				Cooldown       = 0,
+				GlobalCooldown = true,
+				ElementStack   = Elements.ParadoxElement | Elements.NoStack,
 				StackRequired  = false,
 			};
 			base.SetStaticDefaults();

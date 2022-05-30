@@ -25,45 +25,53 @@ namespace BlackMage
 
 		internal static Dictionary<string, string> Keywords = new Dictionary<string, string>()
 		{
+			{ "[MP]", $"[c/{Colors.MP.Hex3()}:MP]" },
+			{ "[Astral Fire]", $"[c/{Colors.Fire.Hex3()}:Astral Fire]" },
+			{ "[Enhanced Flare]", $"[c/{Colors.Fire.Hex3()}:Enhanced Flare]" },
+			{ "[Ice]", $"[c/{Colors.Ice.Hex3()}:Ice]" },
+			{ "[Umbral Ice]", $"[c/{Colors.Ice.Hex3()}:Umbral Ice]" },
+			{ "[Umbral Heart]", $"[c/{Colors.Ice.Hex3()}:Umbral Heart]" },
+			{ "[Umbral Hearts]", $"[c/{Colors.Ice.Hex3()}:Umbral Hearts]" },
+			{ "[Polyglot]", $"[c/{Colors.Polyglot.Hex3()}:Polyglot]" },
+
 			{ "[Fire]", $"[c/{Colors.Fire.Hex3()}:Fire]" },
 			{ "[Fira]", $"[c/{Colors.Fire.Hex3()}:Fira]" },
 			{ "[Firaga]", $"[c/{Colors.Fire.Hex3()}:Firaga]" },
 			{ "[Firaja]", $"[c/{Colors.Fire.Hex3()}:Firaja]" },
 			{ "[Flare]", $"[c/{Colors.Fire.Hex3()}:Flare]" },
 			{ "[Despair]", $"[c/{Colors.Fire.Hex3()}:Despair]" },
+
+			{ "[Blizzard]", $"[c/{Colors.Ice.Hex3()}:Blizzard]" },
+			{ "[Blizzara]", $"[c/{Colors.Ice.Hex3()}:Blizzara]" },
+			{ "[Blizzaga]", $"[c/{Colors.Ice.Hex3()}:Blizzaga]" },
+			{ "[Blizzaja]", $"[c/{Colors.Ice.Hex3()}:Blizzaja]" },
+			{ "[Freeze]", $"[c/{Colors.Ice.Hex3()}:Freeze]" },
+			{ "[Umbral Soul]", $"[c/{Colors.Ice.Hex3()}:Umbral Soul]" },
+
+			{ "[Foul]", $"[c/{Colors.Polyglot.Hex3()}:Foul]" },
+			{ "[Xenoglossy]", $"[c/{Colors.Polyglot.Hex3()}:Xenoglossy]" },
+
+			{
+				"[Paradox]", $"[c/{Color.Lerp(Colors.Fire, Colors.Ice, 0f / 6f).Hex3()}:P]" +
+				             $"[c/{Color.Lerp(Colors.Fire, Colors.Ice, 1f / 6f).Hex3()}:a]" +
+				             $"[c/{Color.Lerp(Colors.Fire, Colors.Ice, 2f / 6f).Hex3()}:r]" +
+				             $"[c/{Color.Lerp(Colors.Fire, Colors.Ice, 3f / 6f).Hex3()}:a]" +
+				             $"[c/{Color.Lerp(Colors.Fire, Colors.Ice, 4f / 6f).Hex3()}:d]" +
+				             $"[c/{Color.Lerp(Colors.Fire, Colors.Ice, 5f / 6f).Hex3()}:o]" +
+				             $"[c/{Color.Lerp(Colors.Fire, Colors.Ice, 6f / 6f).Hex3()}:x]"
+			},
+
+			{
+				"[Transpose]", $"[c/{Color.Lerp(Colors.Fire, Colors.Ice, 0f / 8f).Hex3()}:T]" +
+				               $"[c/{Color.Lerp(Colors.Fire, Colors.Ice, 1f / 8f).Hex3()}:r]" +
+				               $"[c/{Color.Lerp(Colors.Fire, Colors.Ice, 2f / 8f).Hex3()}:a]" +
+				               $"[c/{Color.Lerp(Colors.Fire, Colors.Ice, 3f / 8f).Hex3()}:n]" +
+				               $"[c/{Color.Lerp(Colors.Fire, Colors.Ice, 4f / 8f).Hex3()}:s]" +
+				               $"[c/{Color.Lerp(Colors.Fire, Colors.Ice, 5f / 8f).Hex3()}:p]" +
+				               $"[c/{Color.Lerp(Colors.Fire, Colors.Ice, 6f / 8f).Hex3()}:o]" +
+				               $"[c/{Color.Lerp(Colors.Fire, Colors.Ice, 7f / 8f).Hex3()}:s]" +
+				               $"[c/{Color.Lerp(Colors.Fire, Colors.Ice, 8f / 8f).Hex3()}:e]"
+			},
 		};
-
-		internal static class Strings
-		{
-			public static readonly string Fire1   = $"[c/{Colors.Fire.Hex3()}:Fire]";
-			public static readonly string Fire2   = $"[c/{Colors.Fire.Hex3()}:Fira]";
-			public static readonly string Fire3   = $"[c/{Colors.Fire.Hex3()}:Firaga]";
-			public static readonly string Fire4   = $"[c/{Colors.Fire.Hex3()}:Firaja]";
-			public static readonly string Flare   = $"[c/{Colors.Fire.Hex3()}:Flare]";
-			public static readonly string Despair = $"[c/{Colors.Fire.Hex3()}:Despair]";
-
-			public static readonly string Blizzard1 = $"[c/{Colors.Ice.Hex3()}:Blizzard]";
-			public static readonly string Blizzard2 = $"[c/{Colors.Ice.Hex3()}:Blizzara]";
-			public static readonly string Blizzard3 = $"[c/{Colors.Ice.Hex3()}:Blizzaga]";
-			public static readonly string Blizzard4 = $"[c/{Colors.Ice.Hex3()}:Blizzaja]";
-			public static readonly string Freeze    = $"[c/{Colors.Ice.Hex3()}:Freeze]";
-
-			public static readonly string Foul       = $"[c/{Colors.Polyglot.Hex3()}:Foul]";
-			public static readonly string Xenoglossy = $"[c/{Colors.Polyglot.Hex3()}:Xenoglossy]";
-
-			public static readonly string Paradox = $"[c/{Color.Lerp(Colors.Fire, Colors.Ice, 0f / 6f).Hex3()}:P]" +
-			                                        $"[c/{Color.Lerp(Colors.Fire, Colors.Ice, 1f / 6f).Hex3()}:a]" +
-			                                        $"[c/{Color.Lerp(Colors.Fire, Colors.Ice, 2f / 6f).Hex3()}:r]" +
-			                                        $"[c/{Color.Lerp(Colors.Fire, Colors.Ice, 3f / 6f).Hex3()}:a]" +
-			                                        $"[c/{Color.Lerp(Colors.Fire, Colors.Ice, 4f / 6f).Hex3()}:d]" +
-			                                        $"[c/{Color.Lerp(Colors.Fire, Colors.Ice, 5f / 6f).Hex3()}:o]" +
-			                                        $"[c/{Color.Lerp(Colors.Fire, Colors.Ice, 6f / 6f).Hex3()}:x]";
-
-			public static readonly string MP           = $"[c/{Colors.MP.Hex3()}:MP]";
-			public static readonly string AstralFire   = $"[c/{Colors.Fire.Hex3()}:Astral Fire]";
-			public static readonly string UmbralIce    = $"[c/{Colors.Ice.Hex3()}:Umbral Ice]";
-			public static readonly string UmbralHearts = $"[c/{Colors.Ice.Hex3()}:Umbral Hearts]";
-			public static readonly string Polyglot     = $"[c/{Colors.Polyglot.Hex3()}:Polyglot]";
-		}
 	}
 }

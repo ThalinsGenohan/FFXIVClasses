@@ -48,12 +48,13 @@ namespace BlackMage.Items.Accessories.Crystals
 		protected override int Level => 10;
 
 		protected override string UnlocksTooltip =>
-			"Allows you to cast [Fire] and [Blizzard].\n" +
+			"Allows you to cast [Fire], [Blizzard], and [Transpose].\n" +
 			"Unlocks [MP] and the [Elemental Gauge].\n" +
 			$"[MP] is used for Black Mage spells, and regenerates at a rate of {BlackMagePlayer.MPRegenRate[3]} [MP] every {BlackMagePlayer.MPTickMaxTime / 60f} seconds, up to a max of {BlackMagePlayer.MaxMP}.\n" +
 			$"[Astral Fire] grants a {BlackMagePlayer.FireDamageMultList[4]}x damage increase to [Fire] spells, but a {BlackMagePlayer.FireMPMultList[4]}x [MP] cost, and halts [MP] regeneration.\n" +
 			$"[Umbral Ice] increases [MP] regeneration to {BlackMagePlayer.MPRegenRate[2]} every {BlackMagePlayer.MPTickMaxTime / 60f} seconds, and lowers the [MP] cost of [Ice] spells to {BlackMagePlayer.IceMPMultList[2]}x.\n" +
-			"While under the effect of [Astral Fire] or [Umbral Ice], casting a spell of the opposite element will consume no [MP].";
+			"While under the effect of [Astral Fire] or [Umbral Ice], casting a spell of the opposite element will consume no [MP].\n" +
+			"[Transpose] swaps [Astral Fire] with a single [Umbral Ice], or [Umbral Ice] with a single [Astral Fire].";
 	}
 
 	internal class BLMCrystalLv20 : BaseCrystal
@@ -61,8 +62,8 @@ namespace BlackMage.Items.Accessories.Crystals
 		protected override int Level => 20;
 
 		protected override string UnlocksTooltip =>
-			$"Allows you to cast [Fira] and [Blizzara].\n" +
-			$"Allows the stacking of a second [Astral Fire] (1.6x damage) and [Umbral Ice] (4700 [MP]/2.5 sec, 0.5x cost).";
+			"Allows you to cast [Fira] and [Blizzara].\n" +
+			$"Allows the stacking of a second [Astral Fire] ({BlackMagePlayer.FireDamageMultList[5]}x damage) and [Umbral Ice] ({BlackMagePlayer.MPRegenRate[1]} [MP]/{BlackMagePlayer.MPTickMaxTime / 60f} sec, {BlackMagePlayer.IceMPMultList[1]}x cost).";
 
 		public override void AddRecipes()
 		{
@@ -79,8 +80,8 @@ namespace BlackMage.Items.Accessories.Crystals
 		protected override int Level => 35;
 
 		protected override string UnlocksTooltip =>
-			$"Allows you to cast {Constants.Strings.Fire3} and {Constants.Strings.Blizzard3}.\n" +
-			$"Allows the stacking of a third [Astral Fire] (1.8x damage) and [Umbral Ice] (6200 [MP]/2.5 sec, 0x cost).";
+			"Allows you to cast [Firaga] and [Blizzaga].\n" +
+			$"Allows the stacking of a third [Astral Fire] ({BlackMagePlayer.FireDamageMultList[6]}x damage) and [Umbral Ice] ({BlackMagePlayer.MPRegenRate[0]} [MP]/{BlackMagePlayer.MPTickMaxTime / 60f} sec, {BlackMagePlayer.IceMPMultList[0]}x cost).";
 
 		public override void AddRecipes()
 		{
@@ -97,8 +98,8 @@ namespace BlackMage.Items.Accessories.Crystals
 		protected override int Level => 50;
 
 		protected override string UnlocksTooltip =>
-			$"Allows you to cast {Constants.Strings.Flare} and {Constants.Strings.Freeze}.\n" +
-			$"Casting {Constants.Strings.Fire2} while under [Astral Fire] grants [c/{Constants.Colors.Fire.Hex3()}:Enhanced Flare], increasing the potency of {Constants.Strings.Flare} until [Astral Fire] ends.";
+			"Allows you to cast [Flare] and [Freeze].\n" +
+			"Casting [Fira] while under [Astral Fire] grants [Enhanced Flare], increasing the potency of [Flare] until [Astral Fire] ends.";
 
 		public override void AddRecipes()
 		{
@@ -115,9 +116,9 @@ namespace BlackMage.Items.Accessories.Crystals
 		protected override int Level => 60;
 
 		protected override string UnlocksTooltip =>
-			$"Allows you to cast {Constants.Strings.Fire4} and {Constants.Strings.Blizzard4}.\n" +
-			$"{Constants.Strings.UmbralHearts} nullify [Astral Fire]'s [MP] cost increase, and lower the [MP] cost for {Constants.Strings.Flare} by 1/3.\n" +
-			$"Casting {Constants.Strings.Blizzard4} or {Constants.Strings.Freeze} grants 3 {Constants.Strings.UmbralHearts}.";
+			"Allows you to cast [Firaja] and [Blizzaja].\n" +
+			"[Umbral Hearts] nullify [Astral Fire]'s [MP] cost increase, and lower the [MP] cost for [Flare] by 1/3.\n" +
+			$"Casting [Blizzaja] or [Freeze] grants {BlackMagePlayer.MaxUmbralHearts} [Umbral Hearts].";
 
 		public override void AddRecipes()
 		{
@@ -134,8 +135,8 @@ namespace BlackMage.Items.Accessories.Crystals
 		protected override int Level => 70;
 
 		protected override string UnlocksTooltip =>
-			$"Allows you to cast {Constants.Strings.Foul}.\n" +
-			$"Grants {Constants.Strings.Polyglot} every 30 seconds [Astral Fire] or [Umbral Ice] is active, allowing for {Constants.Strings.Foul} to be cast.";
+			"Allows you to cast [Foul].\n" +
+			$"Grants [Polyglot] every {BlackMagePlayer.PolyglotMaxTime / 60f} seconds [Astral Fire] or [Umbral Ice] is active, allowing for [Foul] to be cast.";
 
 		public override void AddRecipes()
 		{
@@ -152,7 +153,7 @@ namespace BlackMage.Items.Accessories.Crystals
 		protected override int Level => 75;
 
 		protected override string UnlocksTooltip =>
-			$"Allows you to cast {Constants.Strings.Despair}.";
+			"Allows you to cast [Despair].";
 
 		public override void AddRecipes()
 		{
@@ -169,8 +170,9 @@ namespace BlackMage.Items.Accessories.Crystals
 		protected override int Level => 80;
 
 		protected override string UnlocksTooltip =>
-			$"Allows you to cast {Constants.Strings.Xenoglossy}.\n" +
-			$"Allows the stacking of a second {Constants.Strings.Polyglot}.";
+			"Allows you to cast [Umbral Soul] and [Xenoglossy].\n" +
+			"[Umbral Soul] grants 1 stack of [Umbral Ice] and 1 [Umbral Heart]\n" +
+			"Allows the stacking of a second [Polyglot].";
 
 		public override void AddRecipes()
 		{
@@ -187,8 +189,8 @@ namespace BlackMage.Items.Accessories.Crystals
 		protected override int Level => 90;
 
 		protected override string UnlocksTooltip =>
-			$"Allows you to cast {Constants.Strings.Paradox}.\n" +
-			$"{Constants.Strings.Paradox} replaces {Constants.Strings.Fire1} and {Constants.Strings.Blizzard1} upon switching from [Astral Fire] 3 to [Umbral Ice], or from [Umbral Ice] 3 with 3 {Constants.Strings.UmbralHearts} to [Astral Fire].";
+			"Allows you to cast [Paradox].\n" +
+			"[Paradox] replaces [Fire] and [Blizzard] upon switching from [Astral Fire] 3 to [Umbral Ice], or from [Umbral Ice] 3 with 3 [Umbral Hearts] to [Astral Fire].";
 
 		public override void AddRecipes()
 		{

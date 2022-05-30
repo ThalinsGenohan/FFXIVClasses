@@ -188,6 +188,30 @@ namespace BlackMage.Projectiles
 			projectile.velocity =  (projectile.velocity * (inertia - 1) + direction) / inertia;
 		}
 	}
+	internal class Transpose : Spell
+	{
+		protected override bool AoE => false;
+
+		public override void SetStaticDefaults()
+		{
+			Data[projectile.type] = new SpellData
+			{
+				SpellName      = "Transpose",
+				Potency        = 0,
+				MPCost         = 0,
+				Cooldown       = 300,
+				GlobalCooldown = false,
+				ElementStack   = Elements.TransposeElement | Elements.OneStack,
+				StackRequired  = false,
+			};
+			base.SetStaticDefaults();
+		}
+
+		public override void AI()
+		{
+			projectile.Kill();
+		}
+	}
 	internal class Blizzard2 : Spell
 	{
 		protected override bool AoE => true;
@@ -402,6 +426,30 @@ namespace BlackMage.Projectiles
 				StackRequired  = true,
 			};
 			base.SetStaticDefaults();
+		}
+	}
+	internal class UmbralSoul : Spell
+	{
+		protected override bool AoE => false;
+
+		public override void SetStaticDefaults()
+		{
+			Data[projectile.type] = new SpellData
+			{
+				SpellName      = "Umbral Soul",
+				Potency        = 0,
+				MPCost         = 0,
+				Cooldown       = 150,
+				GlobalCooldown = false,
+				ElementStack   = Elements.IceElement | Elements.OneStack,
+				StackRequired  = true,
+			};
+			base.SetStaticDefaults();
+		}
+
+		public override void AI()
+		{
+			projectile.Kill();
 		}
 	}
 	internal class Xenoglossy : Spell

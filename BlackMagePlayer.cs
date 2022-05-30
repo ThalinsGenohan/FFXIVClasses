@@ -68,6 +68,7 @@ namespace BlackMage
 				{
 					list.Add(ModContent.ProjectileType<Fire>());
 					list.Add(ModContent.ProjectileType<Blizzard>());
+					list.Add(ModContent.ProjectileType<Transpose>());
 				}
 				if (SoulCrystalLevel >= 20)
 				{
@@ -94,7 +95,10 @@ namespace BlackMage
 				if (SoulCrystalLevel >= 75)
 					list.Add(ModContent.ProjectileType<Despair>());
 				if (SoulCrystalLevel >= 80)
+				{
+					list.Add(ModContent.ProjectileType<UmbralSoul>());
 					list.Add(ModContent.ProjectileType<Xenoglossy>());
+				}
 				if (SoulCrystalLevel >= 90)
 					list.Add(ModContent.ProjectileType<Paradox>());
 				
@@ -162,8 +166,19 @@ namespace BlackMage
 			if (GlobalCooldownTimer > 0)
 				GlobalCooldownTimer--;
 
-			foreach (int spellId in SpellCooldowns.Keys.Where(spell => SpellCooldowns[spell] > 0))
-				SpellCooldowns[spellId]--;
+			foreach (int spellId in from spellDataPair in Spell.Data
+			                        let spellId = spellDataPair.Key
+			                        let spellData = spellDataPair.Value
+			                        where spellData.Cooldown > 0
+			                        select spellId)
+			{
+				if (SpellCooldowns.ContainsKey(spellId))
+				{
+					if (SpellCooldowns[spellId] > 0)
+						SpellCooldowns[spellId]--;
+				}
+				else SpellCooldowns.Add(spellId, 0);
+			}
 
 			if (--MPTickTimer == 0)
 			{
@@ -211,7 +226,6 @@ namespace BlackMage
 							ElementalChargeTimer = ElementalChargeMaxTime;
 							break;
 					}
-
 					break;
 				case Elements.IceElement:
 					switch (stack)
@@ -230,7 +244,18 @@ namespace BlackMage
 							ElementalChargeTimer = ElementalChargeMaxTime;
 							break;
 					}
-
+					break;
+				case Elements.TransposeElement:
+					if (AstralFire > 0)
+					{
+						UmbralIce            = 1;
+						ElementalChargeTimer = ElementalChargeMaxTime;
+					}
+					else if (UmbralIce > 0)
+					{
+						AstralFire            = 1;
+						ElementalChargeTimer = ElementalChargeMaxTime;
+					}
 					break;
 			}
 		}
@@ -290,6 +315,8 @@ namespace BlackMage
 					AddElementalStack(spellData.ElementStack);
 					if (stack == Elements.HeartStack)
 						UmbralHearts = MaxUmbralHearts;
+					if (spellData.SpellName == "Umbral Soul")
+						UmbralHearts++;
 
 					damage = (int)(damage * IceDamageMult);
 					break;
@@ -309,6 +336,9 @@ namespace BlackMage
 
 					Polyglots--;
 					break;
+				case Elements.TransposeElement:
+					AddElementalStack(spellData.ElementStack);
+					break;
 			}
 
 			SpellCooldowns[spellId] = spellData.Cooldown;
@@ -316,7 +346,8 @@ namespace BlackMage
 			if (spellData.GlobalCooldown)
 				GlobalCooldownTimer = GlobalCooldownMaxTime;
 
-			Projectile.NewProjectile(player.position, Vector2.Zero, spellId, damage, 0f, player.whoAmI);
+			if (damage > 0)
+				Projectile.NewProjectile(player.position, Vector2.Zero, spellId, damage, 0f, player.whoAmI);
 
 			return true;
 		}

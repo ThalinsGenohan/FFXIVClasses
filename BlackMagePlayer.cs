@@ -274,9 +274,9 @@ namespace BlackMage
 					}
 
 					MP -= mp;
-					AddElementalStack(spellData.ElementStack);
 					if (AstralFire > 0)
 						UmbralHearts -= stack == Elements.HeartStack ? UmbralHearts : 1;
+					AddElementalStack(spellData.ElementStack);
 
 					damage = (int)(damage * FireDamageMult);
 					break;

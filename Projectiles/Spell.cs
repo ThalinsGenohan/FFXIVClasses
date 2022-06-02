@@ -23,12 +23,6 @@ namespace BlackMage.Projectiles
 			public int    LevelLearned   { get; set; } = 0;
 		}
 
-		public enum ProjectileTypes
-		{
-			DirectHit        = 0,
-			HomingProjectile = 1,
-		}
-
 		public const int SingleTargetSize = 5;
 		public const int AoESize          = 80;
 

@@ -65,8 +65,6 @@ namespace BlackMage
 
 		public int SoulCrystalLevel { get; set; }
 
-		private int _soulCrystalLevel;
-
 		public int MP
 		{
 			get => _mp;

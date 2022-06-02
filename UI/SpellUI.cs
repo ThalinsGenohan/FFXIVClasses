@@ -82,6 +82,7 @@ namespace BlackMage.UI
 					if (_buttons.ContainsKey(spellId))
 					{
 						_buttons[spellId].Deactivate();
+						_area.RemoveChild(_buttons[spellId]);
 						_buttons.Remove(spellId);
 					}
 

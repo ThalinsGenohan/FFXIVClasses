@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using BlackMage.Buffs;
 using BlackMage.Projectiles;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -107,6 +108,8 @@ namespace BlackMage
 			set => _paradoxReady = value && CanUseParadox;
 		}
 
+		public bool EnhancedFlare { get; set; }
+
 		public uint GlobalCooldownTimer  { get; set; } = GlobalCooldownMaxTime;
 		public uint MPTickTimer          { get; set; } = MPTickMaxTime;
 		public uint ElementalChargeTimer { get; set; } = ElementalChargeMaxTime;
@@ -157,6 +160,7 @@ namespace BlackMage
 		public override void ResetEffects()
 		{
 			SoulCrystalLevel = 0;
+			EnhancedFlare    = false;
 		}
 
 		public bool IsSpellLearned(int spellId) => SoulCrystalLevel >= Spell.Data[spellId].LevelLearned;
@@ -305,7 +309,12 @@ namespace BlackMage
 					if (AstralFire > 0)
 						UmbralHearts -= stack == Elements.HeartStack ? UmbralHearts : 1;
 					AddElementalStack(spellData.ElementStack);
-					damage = (int)(damage * FireDamageMult);
+					if (spellData.SpellName == "Flare")
+						damage = (int)(280 * FireDamageMult);
+					else
+						damage = (int)(damage * FireDamageMult);
+					if (spellData.SpellName == "Fira" && IsSpellLearned(ModContent.ProjectileType<Flare>()))
+						player.AddBuff(ModContent.BuffType<EnhancedFlare>(), 18000);
 					break;
 				case Elements.IceElement:
 					AddElementalStack(spellData.ElementStack);

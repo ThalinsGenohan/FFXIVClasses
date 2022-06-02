@@ -45,14 +45,16 @@ namespace BlackMage.Projectiles
 
 		public override void SetDefaults()
 		{
-			projectile.width       = AoE ? AoESize : SingleTargetSize;
-			projectile.height      = AoE ? AoESize : SingleTargetSize;
-			projectile.friendly    = true;
-			projectile.magic       = true;
-			projectile.knockBack   = 0f;
-			projectile.tileCollide = false;
-			projectile.penetrate   = AoE ? -1 : 1;
-			projectile.timeLeft    = 120;
+			projectile.width                = AoE ? AoESize : SingleTargetSize;
+			projectile.height               = AoE ? AoESize : SingleTargetSize;
+			projectile.friendly             = true;
+			projectile.magic                = true;
+			projectile.knockBack            = 0f;
+			projectile.tileCollide          = false;
+			projectile.penetrate            = AoE ? -1 : 1;
+			projectile.timeLeft             = 120;
+			projectile.usesLocalNPCImmunity = true;
+			projectile.localNPCHitCooldown  = -1;
 		}
 
 		public override bool? CanHitNPC(NPC target)

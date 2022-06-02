@@ -212,12 +212,6 @@ namespace BlackMage.UI
 				_paradox.SetImage(BlankTexture);
 		}
 
-		protected override void DrawSelf(SpriteBatch spriteBatch)
-		{
-			base.DrawSelf(spriteBatch);
-
-		}
-
 		protected override void DrawChildren(SpriteBatch spriteBatch)
 		{
 			base.DrawChildren(spriteBatch);

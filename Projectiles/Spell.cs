@@ -538,11 +538,10 @@ namespace BlackMage.Projectiles
 				ElementStack   = Elements.IceElement | Elements.OneStack,
 				StackRequired  = true,
 				LevelLearned   = 76,
+				Description = "Grants [Umbral Ice] and 1 [Umbral Heart].\n" +
+				              "[Umbral Heart] Bonus: Nullifies [Astral Fire]'s [MP] cost increase for [Fire] spells and reduces [MP] cost for [Flare] by one-third\n" +
+				              "Can only be executed while under the effect of [Umbral Ice].",
 			};
-			Data[projectile.type].Description =
-				"Grants [Umbral Ice] and 1 [Umbral Heart].\n" +
-				"[Umbral Heart] Bonus: Nullifies [Astral Fire]'s [MP] cost increase for [Fire] spells and reduces [MP] cost for [Flare] by one-third\n" +
-				"Can only be executed while under the effect of [Umbral Ice].";
 			base.SetStaticDefaults();
 		}
 

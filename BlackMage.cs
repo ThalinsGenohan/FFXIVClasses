@@ -104,7 +104,12 @@ namespace BlackMage
 					              InterfaceScaleType.UI
 				              )
 				);
-				layers.Insert(resourceBarIndex,
+			}
+
+			int mouseTextIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Mouse Text"));
+			if (mouseTextIndex != -1)
+			{
+				layers.Insert(mouseTextIndex,
 				              new LegacyGameInterfaceLayer(
 					              "BlackMage: Spell UI",
 					              delegate

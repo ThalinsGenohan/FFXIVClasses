@@ -50,9 +50,9 @@ namespace BlackMage.Items.Accessories.Crystals
 		protected override string UnlocksTooltip =>
 			"Allows you to cast [Fire], [Blizzard], and [Transpose].\n" +
 			"Unlocks [MP] and the [Elemental Gauge].\n" +
-			$"[MP] is used for Black Mage spells, and regenerates at a rate of {BlackMagePlayer.MPRegenRate[3]} [MP] every {BlackMagePlayer.MPTickMaxTime / 60f} seconds, up to a max of {BlackMagePlayer.MaxMP}.\n" +
+			$"[MP] is used for Black Mage spells, and regenerates at a rate of {BlackMagePlayer.MPRegenRate[3]} [MP] every {BlackMagePlayer.MPTickSeconds} seconds, up to a max of {BlackMagePlayer.MaxMP}.\n" +
 			$"[Astral Fire] grants a {BlackMagePlayer.FireDamageMultList[4]}x damage increase to [Fire] spells, but a {BlackMagePlayer.FireMPMultList[4]}x [MP] cost, and halts [MP] regeneration.\n" +
-			$"[Umbral Ice] increases [MP] regeneration to {BlackMagePlayer.MPRegenRate[2]} every {BlackMagePlayer.MPTickMaxTime / 60f} seconds, and lowers the [MP] cost of [Ice] spells to {BlackMagePlayer.IceMPMultList[2]}x.\n" +
+			$"[Umbral Ice] increases [MP] regeneration to {BlackMagePlayer.MPRegenRate[2]} every {BlackMagePlayer.MPTickSeconds} seconds, and lowers the [MP] cost of [Ice] spells to {BlackMagePlayer.IceMPMultList[2]}x.\n" +
 			"While under the effect of [Astral Fire] or [Umbral Ice], casting a spell of the opposite element will consume no [MP].\n" +
 			"[Transpose] swaps [Astral Fire] with a single [Umbral Ice], or [Umbral Ice] with a single [Astral Fire].";
 	}
@@ -63,7 +63,7 @@ namespace BlackMage.Items.Accessories.Crystals
 
 		protected override string UnlocksTooltip =>
 			"Allows you to cast [Fira] and [Blizzara].\n" +
-			$"Allows the stacking of a second [Astral Fire] ({BlackMagePlayer.FireDamageMultList[5]}x damage) and [Umbral Ice] ({BlackMagePlayer.MPRegenRate[1]} [MP]/{BlackMagePlayer.MPTickMaxTime / 60f} sec, {BlackMagePlayer.IceMPMultList[1]}x cost).";
+			$"Allows the stacking of a second [Astral Fire] ({BlackMagePlayer.FireDamageMultList[5]}x damage) and [Umbral Ice] ({BlackMagePlayer.MPRegenRate[1]} [MP]/{BlackMagePlayer.MPTickSeconds} sec, {BlackMagePlayer.IceMPMultList[1]}x cost).";
 
 		public override void AddRecipes()
 		{
@@ -81,7 +81,7 @@ namespace BlackMage.Items.Accessories.Crystals
 
 		protected override string UnlocksTooltip =>
 			"Allows you to cast [Firaga] and [Blizzaga].\n" +
-			$"Allows the stacking of a third [Astral Fire] ({BlackMagePlayer.FireDamageMultList[6]}x damage) and [Umbral Ice] ({BlackMagePlayer.MPRegenRate[0]} [MP]/{BlackMagePlayer.MPTickMaxTime / 60f} sec, {BlackMagePlayer.IceMPMultList[0]}x cost).";
+			$"Allows the stacking of a third [Astral Fire] ({BlackMagePlayer.FireDamageMultList[6]}x damage) and [Umbral Ice] ({BlackMagePlayer.MPRegenRate[0]} [MP]/{BlackMagePlayer.MPTickSeconds} sec, {BlackMagePlayer.IceMPMultList[0]}x cost).";
 
 		public override void AddRecipes()
 		{
@@ -136,7 +136,7 @@ namespace BlackMage.Items.Accessories.Crystals
 
 		protected override string UnlocksTooltip =>
 			"Allows you to cast [Foul].\n" +
-			$"Grants [Polyglot] every {BlackMagePlayer.PolyglotMaxTime / 60f} seconds [Astral Fire] or [Umbral Ice] is active, allowing for [Foul] to be cast.";
+			$"Grants [Polyglot] every {BlackMagePlayer.PolyglotChargeSeconds} seconds [Astral Fire] or [Umbral Ice] is active, allowing for [Foul] to be cast.";
 
 		public override void AddRecipes()
 		{

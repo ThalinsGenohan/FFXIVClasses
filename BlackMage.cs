@@ -12,6 +12,7 @@ namespace BlackMage
 		internal MPBar                MPBar                { get; private set; }
 		internal Castbar              Castbar              { get; private set; }
 		internal SimpleElementalGauge SimpleElementalGauge { get; private set; }
+		internal FancyElementalGauge  FancyElementalGauge  { get; private set; }
 		internal SpellUI              SpellUI              { get; private set; }
 
 		private UserInterface _mpBarUI;
@@ -32,6 +33,7 @@ namespace BlackMage
 				_castbarUI.SetState(Castbar);
 
 				SimpleElementalGauge = new SimpleElementalGauge();
+				FancyElementalGauge  = new FancyElementalGauge();
 				_elementalGaugeUI    = new UserInterface();
 				_elementalGaugeUI.SetState(SimpleElementalGauge);
 

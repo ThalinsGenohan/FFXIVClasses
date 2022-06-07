@@ -15,6 +15,7 @@ namespace BlackMage.Projectiles
 			public string SpellName      { get; set; } = "";
 			public int    Potency        { get; set; } = 0;
 			public int    MPCost         { get; set; } = 0;
+			public uint   CastTime       { get; set; } = 0;
 			public uint   Cooldown       { get; set; } = 0;
 			public bool   GlobalCooldown { get; set; } = true;
 			public byte   ElementStack   { get; set; } = Elements.NoElement | Elements.NoStack;
@@ -112,6 +113,7 @@ namespace BlackMage.Projectiles
 				SpellName      = "Blizzard",
 				Potency        = 180,
 				MPCost         = 400,
+				CastTime       = 150,
 				Cooldown       = 0,
 				GlobalCooldown = true,
 				ElementStack   = Elements.IceElement | Elements.OneStack,
@@ -137,6 +139,7 @@ namespace BlackMage.Projectiles
 				SpellName      = "Fire",
 				Potency        = 180,
 				MPCost         = 800,
+				CastTime       = 150,
 				Cooldown       = 0,
 				GlobalCooldown = true,
 				ElementStack   = Elements.FireElement | Elements.OneStack,
@@ -146,7 +149,9 @@ namespace BlackMage.Projectiles
 			Data[projectile.type].Description =
 				$"Deals fire damage with a potency of {Data[projectile.type].Potency}.\n" +
 				"Additional Effect: Grants [Astral Fire] or removes [Umbral Ice]\n" +
-				$"Duration: {BlackMagePlayer.ElementalChargeSeconds}s";
+				$"Duration: {BlackMagePlayer.ElementalChargeSeconds}s\n" +
+				"Additional Effect: 40% chance the next [Firaga] will cost no MP and have no cast time\n" +
+				"Duration: 30s";
 			base.SetStaticDefaults();
 		}
 
@@ -215,6 +220,7 @@ namespace BlackMage.Projectiles
 				SpellName      = "Transpose",
 				Potency        = 0,
 				MPCost         = 0,
+				CastTime       = 0,
 				Cooldown       = 300,
 				GlobalCooldown = false,
 				ElementStack   = Elements.TransposeElement | Elements.OneStack,
@@ -243,6 +249,7 @@ namespace BlackMage.Projectiles
 				SpellName      = "Blizzara",
 				Potency        = 100,
 				MPCost         = 800,
+				CastTime       = 180,
 				Cooldown       = 0,
 				GlobalCooldown = true,
 				ElementStack   = Elements.IceElement | Elements.FullStack,
@@ -268,6 +275,7 @@ namespace BlackMage.Projectiles
 				SpellName      = "Scathe",
 				Potency        = 100,
 				MPCost         = 800,
+				CastTime       = 0,
 				Cooldown       = 0,
 				GlobalCooldown = true,
 				ElementStack   = Elements.NoElement | Elements.NoStack,
@@ -303,6 +311,7 @@ namespace BlackMage.Projectiles
 				SpellName      = "Fira",
 				Potency        = 100,
 				MPCost         = 1500,
+				CastTime       = 180,
 				Cooldown       = 0,
 				GlobalCooldown = true,
 				ElementStack   = Elements.FireElement | Elements.FullStack,
@@ -330,7 +339,8 @@ namespace BlackMage.Projectiles
 				SpellName      = "Firaga",
 				Potency        = 260,
 				MPCost         = 2000,
-				Cooldown       = 210,
+				CastTime       = 210,
+				Cooldown       = 0,
 				GlobalCooldown = true,
 				ElementStack   = Elements.FireElement | Elements.FullStack,
 				StackRequired  = false,
@@ -355,7 +365,8 @@ namespace BlackMage.Projectiles
 				SpellName      = "Blizzaga",
 				Potency        = 260,
 				MPCost         = 800,
-				Cooldown       = 210,
+				CastTime       = 210,
+				Cooldown       = 0,
 				GlobalCooldown = true,
 				ElementStack   = Elements.IceElement | Elements.FullStack,
 				StackRequired  = false,
@@ -380,6 +391,7 @@ namespace BlackMage.Projectiles
 				SpellName      = "Freeze",
 				Potency        = 120,
 				MPCost         = 1000,
+				CastTime       = 168,
 				Cooldown       = 0,
 				GlobalCooldown = true,
 				ElementStack   = Elements.IceElement | Elements.HeartStack,
@@ -406,6 +418,7 @@ namespace BlackMage.Projectiles
 				SpellName      = "Flare",
 				Potency        = 220,
 				MPCost         = -1,
+				CastTime       = 240,
 				Cooldown       = 0,
 				GlobalCooldown = true,
 				ElementStack   = Elements.FireElement | Elements.HeartStack,
@@ -433,6 +446,7 @@ namespace BlackMage.Projectiles
 				SpellName      = "Blizzaja",
 				Potency        = 310,
 				MPCost         = 800,
+				CastTime       = 150,
 				Cooldown       = 0,
 				GlobalCooldown = true,
 				ElementStack   = Elements.IceElement | Elements.HeartStack,
@@ -459,6 +473,7 @@ namespace BlackMage.Projectiles
 				SpellName      = "Firaja",
 				Potency        = 310,
 				MPCost         = 800,
+				CastTime       = 168,
 				Cooldown       = 0,
 				GlobalCooldown = true,
 				ElementStack   = Elements.FireElement | Elements.NoStack,
@@ -483,6 +498,7 @@ namespace BlackMage.Projectiles
 				SpellName      = "Foul",
 				Potency        = 560,
 				MPCost         = 0,
+				CastTime       = 0,
 				Cooldown       = 0,
 				GlobalCooldown = true,
 				ElementStack   = Elements.PolyglotElement | Elements.NoStack,
@@ -507,6 +523,7 @@ namespace BlackMage.Projectiles
 				SpellName      = "Despair",
 				Potency        = 340,
 				MPCost         = -1,
+				CastTime       = 180,
 				Cooldown       = 0,
 				GlobalCooldown = true,
 				ElementStack   = Elements.FireElement | Elements.FullStack,
@@ -533,6 +550,7 @@ namespace BlackMage.Projectiles
 				SpellName      = "Umbral Soul",
 				Potency        = 0,
 				MPCost         = 0,
+				CastTime       = 0,
 				Cooldown       = 150,
 				GlobalCooldown = false,
 				ElementStack   = Elements.IceElement | Elements.OneStack,
@@ -562,6 +580,7 @@ namespace BlackMage.Projectiles
 				SpellName      = "Xenoglossy",
 				Potency        = 760,
 				MPCost         = 0,
+				CastTime       = 0,
 				Cooldown       = 0,
 				GlobalCooldown = true,
 				ElementStack   = Elements.PolyglotElement | Elements.NoStack,
@@ -586,6 +605,7 @@ namespace BlackMage.Projectiles
 				SpellName      = "Paradox",
 				Potency        = 500,
 				MPCost         = 1600,
+				CastTime       = 150,
 				Cooldown       = 0,
 				GlobalCooldown = true,
 				ElementStack   = Elements.ParadoxElement | Elements.NoStack,

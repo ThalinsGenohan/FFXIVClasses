@@ -25,10 +25,11 @@ namespace BlackMage.UI
 		public override void OnInitialize()
 		{
 			_area = new UIElement();
-			_area.Top.Set(120f, 0f);
-			_area.Left.Set(10f, 0f);
+			_area.Top.Set(0f, 0.85f);
+			_area.Left.Set(0f, 0f);
 			_area.Width.Set((IconSize + Padding) * Spell.Data.Count, 0f);
 			_area.Height.Set(80f, 0f);
+			_area.HAlign = 0.5f;
 			Append(_area);
 
 			RefreshSpells();
@@ -115,7 +116,7 @@ namespace BlackMage.UI
 
 		private static void CastSpell(int spellId)
 		{
-			Main.LocalPlayer.GetModPlayer<BlackMagePlayer>().CastSpell(spellId);
+			Main.LocalPlayer.GetModPlayer<BlackMagePlayer>().BeginSpellCast(spellId);
 		}
 		
 		internal class SpellButton : UIImageButton
@@ -179,7 +180,8 @@ namespace BlackMage.UI
 						ManaText.TextColor *= 0.6f;
 					DrawCooldown(spriteBatch);
 				}
-				else if (!BLM.CanCastSpell(_spellId))
+				else if (!BLM.CanCastSpell(_spellId) || (BLM.GlobalCooldownTimer > 0 && SpellData.GlobalCooldown) ||
+				         BLM.SpellCooldowns[_spellId] > 0)
 				{
 					if (BLM.MP >= BLM.GetSpellCost(_spellId))
 						ManaText.TextColor *= 0.6f;

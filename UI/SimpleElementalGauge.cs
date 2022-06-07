@@ -36,15 +36,15 @@ namespace BlackMage.UI
 		private const float DiamondSize = 28f;
 		private const float BarWidth    = 200f;
 
-		private static readonly Vector2 ElementStackPos = new Vector2(DiamondSize, DiamondSize * 2f);
+		private static readonly Vector2 ElementStackPos = new Vector2(DiamondSize, DiamondSize + PolyglotBarFrameTexture.Height);
 
 		private static readonly Vector2 HeartPos =
 			ElementStackPos + new Vector2(DiamondSize * 3f + 2f, 0f);
 
 		private static readonly Vector2 PolyglotBarPos = new Vector2(0f, DiamondSize);
-		private static readonly Vector2 PolyglotPos = PolyglotBarPos + new Vector2(BarWidth, 0f);
+		private static readonly Vector2 PolyglotPos = PolyglotBarPos + new Vector2(BarWidth, -2f);
 		private static readonly Vector2 ParadoxPos = new Vector2(HeartPos.X - (float)Math.Floor(DiamondSize / 2f), 0f);
-		private static readonly Vector2 ElementCountdownPos = new Vector2(0f, DiamondSize * 2.5f);
+		private static readonly Vector2 ElementCountdownPos = new Vector2(0f, DiamondSize + PolyglotBarFrameTexture.Height + 2f);
 
 		private UIElement _area;
 		private UIImage[] _elementStacks;
@@ -102,7 +102,7 @@ namespace BlackMage.UI
 			_polyglotBarFrame.Left.Set(PolyglotBarPos.X, 0f);
 			_polyglotBarFrame.Top.Set(PolyglotBarPos.Y, 0f);
 			_polyglotBarFrame.Width.Set(BarWidth, 0f);
-			_polyglotBarFrame.Height.Set(DiamondSize, 0f);
+			_polyglotBarFrame.Height.Set(PolyglotBarFrameTexture.Height, 0f);
 
 			_elementCountdown = new UIText("0");
 			_elementCountdown.Left.Set(ElementCountdownPos.X, 0f);

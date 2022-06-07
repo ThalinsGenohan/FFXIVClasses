@@ -9,13 +9,19 @@ namespace BlackMage
 	{
 		internal static class Colors
 		{
-			public static readonly Color BlackMage = new Color(0x60, 0x46, 0x88);
-			public static readonly Color MPDark    = new Color(0x8c, 0x30, 0x53);
-			public static readonly Color MPLight   = new Color(0xca, 0x6d, 0x85);
-			public static readonly Color MP        = new Color(0xfb, 0x60, 0xae);
-			public static readonly Color Fire      = new Color(0xff, 0x8f, 0x8e);
-			public static readonly Color Ice       = new Color(0x93, 0xc9, 0xff);
-			public static readonly Color Polyglot  = new Color(0x60, 0x46, 0x88);
+			public static readonly Color BlackMage           = new Color(0x60, 0x46, 0x88);
+			public static readonly Color MPTopDark           = new Color(0xaf, 0x2c, 0x64);
+			public static readonly Color MPTopLight          = new Color(0xfb, 0x79, 0xb9);
+			public static readonly Color MPBottomDark        = new Color(0x71, 0x04, 0x35);
+			public static readonly Color MPBottomLight       = new Color(0xdb, 0x48, 0x86);
+			public static readonly Color MP                  = new Color(0xbd, 0x3c, 0x76);
+			public static readonly Color Fire                = new Color(0xff, 0x8f, 0x8e);
+			public static readonly Color Ice                 = new Color(0x93, 0xc9, 0xff);
+			public static readonly Color Polyglot            = new Color(0x60, 0x46, 0x88);
+			public static readonly Color PolyglotTopDark     = new Color(0x7b, 0x44, 0x8c);
+			public static readonly Color PolyglotTopLight    = new Color(0xdd, 0x99, 0xf0);
+			public static readonly Color PolyglotBottomDark  = new Color(0x4a, 0x17, 0x5b);
+			public static readonly Color PolyglotBottomLight = new Color(0xac, 0x6b, 0xbf);
 		}
 
 		internal static string ReplaceKeywords(string inStr)

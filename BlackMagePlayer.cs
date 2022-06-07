@@ -110,6 +110,10 @@ namespace BlackMage
 
 		public bool EnhancedFlare { get; set; }
 
+		public int? CurrentSpell { get; set; } = null;
+
+		public uint CastTimer            { get; set; } = 0;
+		public uint MaxCastTimer         { get; set; } = 0;
 		public uint GlobalCooldownTimer  { get; set; } = GlobalCooldownMaxTime;
 		public uint MPTickTimer          { get; set; } = MPTickMaxTime;
 		public uint ElementalChargeTimer { get; set; } = ElementalChargeMaxTime;
@@ -125,6 +129,15 @@ namespace BlackMage
 		{
 			if (GlobalCooldownTimer > 0)
 				GlobalCooldownTimer--;
+
+			if (CastTimer > 0)
+				CastTimer--;
+
+			if (CastTimer == 0 && CurrentSpell != null)
+			{
+				CastSpell(CurrentSpell.Value);
+				CurrentSpell = null;
+			}
 
 			foreach (int spellId in from spellDataPair in Spell.Data
 			                        let spellId = spellDataPair.Key
@@ -197,8 +210,8 @@ namespace BlackMage
 				SpellCooldowns.Add(spellId, 0);
 
 			Spell.SpellData spellData = Spell.Data[spellId];
-			if ((GlobalCooldownTimer > 0 && spellData.GlobalCooldown) || SpellCooldowns[spellId] > 0)
-				return false;
+			/*if ((GlobalCooldownTimer > 0 && spellData.GlobalCooldown) || SpellCooldowns[spellId] > 0)
+				return false;*/
 
 			switch (spellData.ElementStack & Elements.ElementMask)
 			{
@@ -290,6 +303,27 @@ namespace BlackMage
 			PolyglotTimer        = PolyglotMaxTime;
 		}
 
+		public void BeginSpellCast(int spellId)
+		{
+			if (!CanCastSpell(spellId) || (GlobalCooldownTimer > 0 && Spell.Data[spellId].GlobalCooldown) ||
+			    SpellCooldowns[spellId] > 0)
+				return;
+
+			CurrentSpell = spellId;
+
+			Spell.SpellData spellData = Spell.Data[spellId];
+
+			MaxCastTimer = spellData.CastTime;
+			var element  = (byte)(spellData.ElementStack & Elements.ElementMask);
+			if ((element == Elements.FireElement && UmbralIce == MaxElementStacks) ||
+			    (element == Elements.IceElement && AstralFire == MaxElementStacks))
+				MaxCastTimer /= 2;
+
+			CastTimer = MaxCastTimer;
+			if (Spell.Data[spellId].GlobalCooldown)
+				GlobalCooldownTimer = GlobalCooldownMaxTime;
+		}
+
 		public bool CastSpell(int spellId)
 		{
 			if (!CanCastSpell(spellId))
@@ -308,25 +342,26 @@ namespace BlackMage
 				case Elements.FireElement:
 					if (AstralFire > 0)
 						UmbralHearts -= stack == Elements.HeartStack ? UmbralHearts : 1;
-					AddElementalStack(spellData.ElementStack);
 					if (spellData.SpellName == "Flare")
 						damage = (int)(280 * FireDamageMult);
 					else
 						damage = (int)(damage * FireDamageMult);
-					if (spellData.SpellName == "Fira" && IsSpellLearned(ModContent.ProjectileType<Flare>()))
+					if (spellData.SpellName == "Fira" && IsSpellLearned(ModContent.ProjectileType<Flare>()) &&
+					    AstralFire > 0)
 						player.AddBuff(ModContent.BuffType<EnhancedFlare>(), 18000);
+					AddElementalStack(spellData.ElementStack);
 					break;
 				case Elements.IceElement:
-					AddElementalStack(spellData.ElementStack);
 					if (stack == Elements.HeartStack)
 						UmbralHearts = MaxUmbralHearts;
 					if (spellData.SpellName == "Umbral Soul")
 						UmbralHearts++;
 					damage = (int)(damage * IceDamageMult);
+					AddElementalStack(spellData.ElementStack);
 					break;
 				case Elements.ParadoxElement:
-					ParadoxReady         =  false;
-					ElementalChargeTimer =  ElementalChargeMaxTime;
+					ParadoxReady         = false;
+					ElementalChargeTimer = ElementalChargeMaxTime;
 					break;
 				case Elements.PolyglotElement:
 					Polyglots--;
@@ -337,9 +372,6 @@ namespace BlackMage
 			}
 
 			SpellCooldowns[spellId] = spellData.Cooldown;
-
-			if (spellData.GlobalCooldown)
-				GlobalCooldownTimer = GlobalCooldownMaxTime;
 
 			if (damage > 0)
 				Projectile.NewProjectile(player.position, Vector2.Zero, spellId, damage, 0f, player.whoAmI);

@@ -9,13 +9,15 @@ namespace BlackMage
 {
 	public class BlackMage : Mod
 	{
-		internal MPBar          MPBar          { get; private set; }
-		internal ElementalGauge ElementalGauge { get; private set; }
-		internal SpellUI        SpellUI        { get; private set; }
+		internal MPBar                MPBar                { get; private set; }
+		internal Castbar              Castbar              { get; private set; }
+		internal SimpleElementalGauge SimpleElementalGauge { get; private set; }
+		internal SpellUI              SpellUI              { get; private set; }
 
-		private  UserInterface  _mpBarUI;
-		private  UserInterface  _elementalGaugeUI;
-		private  UserInterface  _spellUI;
+		private UserInterface _mpBarUI;
+		private UserInterface _castbarUI;
+		private UserInterface _elementalGaugeUI;
+		private UserInterface _spellUI;
 
 		public override void Load()
 		{
@@ -25,9 +27,13 @@ namespace BlackMage
 				_mpBarUI = new UserInterface();
 				_mpBarUI.SetState(MPBar);
 
-				ElementalGauge    = new ElementalGauge();
-				_elementalGaugeUI = new UserInterface();
-				_elementalGaugeUI.SetState(ElementalGauge);
+				Castbar = new Castbar();
+				_castbarUI = new UserInterface();
+				_castbarUI.SetState(Castbar);
+
+				SimpleElementalGauge = new SimpleElementalGauge();
+				_elementalGaugeUI    = new UserInterface();
+				_elementalGaugeUI.SetState(SimpleElementalGauge);
 
 				SpellUI  = new SpellUI();
 				_spellUI = new UserInterface();
@@ -48,6 +54,8 @@ namespace BlackMage
 			{
 				if (_mpBarUI.CurrentState != null)
 					_mpBarUI.SetState(null);
+				if (_castbarUI.CurrentState != null)
+					_castbarUI.SetState(null);
 				if (_elementalGaugeUI.CurrentState != null)
 					_elementalGaugeUI.SetState(null);
 				if (_spellUI.CurrentState != null)
@@ -57,8 +65,10 @@ namespace BlackMage
 			{
 				if (_mpBarUI.CurrentState == null)
 					_mpBarUI.SetState(MPBar);
+				if (_castbarUI.CurrentState == null)
+					_castbarUI.SetState(Castbar);
 				if (_elementalGaugeUI.CurrentState == null)
-					_elementalGaugeUI.SetState(ElementalGauge);
+					_elementalGaugeUI.SetState(SimpleElementalGauge);
 				if (player.HasMinionAttackTargetNPC)
 				{
 					if (_spellUI.CurrentState == null)
@@ -73,6 +83,7 @@ namespace BlackMage
 			}
 
 			_mpBarUI.Update(gameTime);
+			_castbarUI.Update(gameTime);
 			_elementalGaugeUI.Update(gameTime);
 			_spellUI.Update(gameTime);
 		}
@@ -88,6 +99,16 @@ namespace BlackMage
 					              delegate
 					              {
 						              _mpBarUI.Draw(Main.spriteBatch, new GameTime());
+						              return true;
+					              },
+					              InterfaceScaleType.UI)
+				);
+				layers.Insert(resourceBarIndex,
+				              new LegacyGameInterfaceLayer(
+					              "BlackMage: Castbar",
+					              delegate
+					              {
+						              _castbarUI.Draw(Main.spriteBatch, new GameTime());
 						              return true;
 					              },
 					              InterfaceScaleType.UI)

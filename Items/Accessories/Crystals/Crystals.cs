@@ -51,6 +51,7 @@ namespace BlackMage.Items.Accessories.Crystals
 			"Allows you to cast [Fire], [Blizzard], and [Transpose].\n" +
 			"Unlocks [MP] and the [Elemental Gauge].\n" +
 			$"[MP] is used for Black Mage spells, and regenerates at a rate of {BlackMagePlayer.MPRegenRate[3]} [MP] every {BlackMagePlayer.MPTickSeconds} seconds, up to a max of {BlackMagePlayer.MaxMP}.\n" +
+			"Upon selecting a spell, the spell's cast time must be completed before the spell will cast. Moving does not interrupt casting times.\n" +
 			$"[Astral Fire] grants a {BlackMagePlayer.FireDamageMultList[4]}x damage increase to [Fire] spells, but a {BlackMagePlayer.FireMPMultList[4]}x [MP] cost, and halts [MP] regeneration.\n" +
 			$"[Umbral Ice] increases [MP] regeneration to {BlackMagePlayer.MPRegenRate[2]} every {BlackMagePlayer.MPTickSeconds} seconds, and lowers the [MP] cost of [Ice] spells to {BlackMagePlayer.IceMPMultList[2]}x.\n" +
 			"While under the effect of [Astral Fire] or [Umbral Ice], casting a spell of the opposite element will consume no [MP].\n" +
@@ -99,7 +100,8 @@ namespace BlackMage.Items.Accessories.Crystals
 
 		protected override string UnlocksTooltip =>
 			"Allows you to cast [Flare] and [Freeze].\n" +
-			"Casting [Fira] while under [Astral Fire] grants [Enhanced Flare], increasing the potency of [Flare] until [Astral Fire] ends.";
+			"Casting [Fira] while under [Astral Fire] grants [Enhanced Flare], increasing the potency of [Flare] until [Astral Fire] ends.\n" +
+			"Casting [Fire] has a 40% chance to make your next [Firaga] cost no [MP] and have no cast time.";
 
 		public override void AddRecipes()
 		{

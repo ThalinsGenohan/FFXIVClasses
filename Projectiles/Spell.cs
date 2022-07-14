@@ -22,6 +22,7 @@ namespace BlackMage.Projectiles
 			public bool   StackRequired  { get; set; } = false;
 			public string Description    { get; set; } = "PLACEHOLDER\nYou shouldn't be seeing this.";
 			public int    LevelLearned   { get; set; } = 0;
+			public Action<Player>     OnCastEffect     { get; set; } = _ => throw new NotImplementedException();
 		}
 
 		public const int SingleTargetSize = 5;
@@ -145,12 +146,19 @@ namespace BlackMage.Projectiles
 				ElementStack   = Elements.FireElement | Elements.OneStack,
 				StackRequired  = false,
 				LevelLearned   = 2,
+				OnCastEffect = player =>
+				{
+					if (blm.SoulCrystalLevel < 42 || Main.rand.Next(0, 9) >= 4)
+						return;
+
+					player.AddBuff(ModContent.BuffType<Firestarter>(), 1800);
+				},
 			};
 			Data[projectile.type].Description =
 				$"Deals fire damage with a potency of {Data[projectile.type].Potency}.\n" +
 				"Additional Effect: Grants [Astral Fire] or removes [Umbral Ice]\n" +
 				$"Duration: {BlackMagePlayer.ElementalChargeSeconds}s\n" +
-				"Additional Effect: 40% chance the next [Firaga] will cost no MP and have no cast time\n" +
+				"Additional Effect: 40% chance the next [Firaga] will cost no [MP] and have no cast time\n" +
 				"Duration: 30s";
 			base.SetStaticDefaults();
 		}
@@ -345,6 +353,12 @@ namespace BlackMage.Projectiles
 				ElementStack   = Elements.FireElement | Elements.FullStack,
 				StackRequired  = false,
 				LevelLearned   = 35,
+				OnCastEffect = player =>
+				{
+					var blm    = player.GetModPlayer<BlackMagePlayer>();
+					if (blm.Firestarter)
+						player.ClearBuff(ModContent.BuffType<Firestarter>());
+				},
 			};
 			Data[projectile.type].Description =
 				$"Deals fire damage with a potency of {Data[projectile.type].Potency}.\n" +
@@ -611,6 +625,15 @@ namespace BlackMage.Projectiles
 				ElementStack   = Elements.ParadoxElement | Elements.NoStack,
 				StackRequired  = false,
 				LevelLearned   = 90,
+				OnCastEffect = player =>
+				{
+					var blm = player.GetModPlayer<BlackMagePlayer>();
+
+					if (blm.AstralFire == 0 || blm.SoulCrystalLevel < 42 || Main.rand.Next(0, 9) >= 4)
+						return;
+
+					player.AddBuff(ModContent.BuffType<Firestarter>(), 1800);
+				},
 			};
 			Data[projectile.type].Description =
 				$"Deals unaspected damage with a potency of {Data[projectile.type].Potency}.\n" +

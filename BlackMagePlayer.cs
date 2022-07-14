@@ -369,6 +369,8 @@ namespace BlackMage
 					break;
 			}
 
+			spellData.OnCastEffect(player);
+
 			SpellCooldowns[spellId] = spellData.Cooldown;
 
 			if (damage > 0)

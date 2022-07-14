@@ -125,10 +125,10 @@ namespace BlackMage.UI
 			public UIText CooldownText { get; set; }
 
 			private const    float BorderThickness = 2f;
-			private readonly int   _spellId;
+			private readonly int?  _spellId;
 
-			private static BlackMagePlayer BLM       => Main.LocalPlayer.GetModPlayer<BlackMagePlayer>();
-			private        Spell.SpellData SpellData => Spell.Data[_spellId];
+			private static BlackMagePlayer  BLM       => Main.LocalPlayer.GetModPlayer<BlackMagePlayer>();
+			private        Spell.SpellData SpellData => _spellId == null ? null : Spell.Data[_spellId.Value];
 
 			public SpellButton(int spellId, Texture2D texture) : base(texture)
 			{
@@ -144,6 +144,9 @@ namespace BlackMage.UI
 
 			protected override void DrawSelf(SpriteBatch spriteBatch)
 			{
+				if (_spellId == -1)
+					return;
+
 				base.DrawSelf(spriteBatch);
 
 				var   hitbox  = GetInnerDimensions().ToRectangle();
@@ -172,25 +175,25 @@ namespace BlackMage.UI
 					}
 				}
 
-				if (!BLM.SpellCooldowns.ContainsKey(_spellId))
-					BLM.SpellCooldowns.Add(_spellId, 0);
-				if (BLM.SpellCooldowns[_spellId] > 0 || (SpellData.GlobalCooldown && BLM.GlobalCooldownTimer > 0))
+				if (!BLM.SpellCooldowns.ContainsKey(_spellId.Value))
+					BLM.SpellCooldowns.Add(_spellId.Value, 0);
+				if (BLM.SpellCooldowns[_spellId.Value] > 0 || (SpellData.GlobalCooldown && BLM.GlobalCooldownTimer > 0))
 				{
-					if (BLM.MP >= BLM.GetSpellCost(_spellId))
+					if (BLM.MP >= BLM.GetSpellCost(_spellId.Value))
 						ManaText.TextColor *= 0.6f;
 					DrawCooldown(spriteBatch);
 				}
-				else if (!BLM.CanCastSpell(_spellId) || (BLM.GlobalCooldownTimer > 0 && SpellData.GlobalCooldown) ||
-				         BLM.SpellCooldowns[_spellId] > 0)
+				else if (!BLM.CanCastSpell(_spellId.Value) || (BLM.GlobalCooldownTimer > 0 && SpellData.GlobalCooldown) ||
+				         BLM.SpellCooldowns[_spellId.Value] > 0)
 				{
-					if (BLM.MP >= BLM.GetSpellCost(_spellId))
+					if (BLM.MP >= BLM.GetSpellCost(_spellId.Value))
 						ManaText.TextColor *= 0.6f;
 					spriteBatch.Draw(Main.magicPixel,
 					                 new Rectangle(left, top, size, size),
 					                 new Color(0f, 0f, 0f, 0.5f));
 				}
 
-				if (BLM.SpellCooldowns[_spellId] == 0 && !(SpellData.GlobalCooldown && BLM.GlobalCooldownTimer > 0))
+				if (BLM.SpellCooldowns[_spellId.Value] == 0 && !(SpellData.GlobalCooldown && BLM.GlobalCooldownTimer > 0))
 					CooldownText.SetText("");
 			}
 
@@ -205,15 +208,15 @@ namespace BlackMage.UI
 				var   center = new Vector2(left + size / 2f, top + size / 2f);
 				float radius = size / 2f;
 
-				uint currentTimer = BLM.SpellCooldowns[_spellId] > 0
-					                    ? BLM.SpellCooldowns[_spellId]
+				uint currentTimer = BLM.SpellCooldowns[_spellId.Value] > 0
+					                    ? BLM.SpellCooldowns[_spellId.Value]
 					                    : SpellData.GlobalCooldown
 						                    ? BLM.GlobalCooldownTimer
 						                    : 0;
 
 				CooldownText.SetText(Math.Ceiling(currentTimer / 60f).ToString(CultureInfo.CurrentCulture), 0.8f, false);
 
-				uint maxTimer = BLM.SpellCooldowns[_spellId] > 0
+				uint maxTimer = BLM.SpellCooldowns[_spellId.Value] > 0
 					                    ? SpellData.Cooldown
 					                    : SpellData.GlobalCooldown
 						                    ? BlackMagePlayer.GlobalCooldownMaxTime

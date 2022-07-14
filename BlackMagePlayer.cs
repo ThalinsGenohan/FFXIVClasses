@@ -179,21 +179,22 @@ namespace BlackMage
 		public int GetSpellCost(int spellId)
 		{
 			Spell.SpellData spellData = Spell.Data[spellId];
-			switch (spellData.ElementStack & Elements.ElementMask)
+			switch (spellData.Element)
 			{
-				case Elements.FireElement when (spellData.ElementStack & Elements.StackMask) == Elements.HeartStack &&
-				                               UmbralHearts > 0:
+				case Constants.Elements.FireElement when spellData.MPCost == -1 && UmbralHearts > 0:
 					return Math.Max((int)(MP / 1.5f), 800);
-				case Elements.FireElement when spellData.MPCost == -1:
+				case Constants.Elements.FireElement when spellData.MPCost == -1:
 					return Math.Max(MP, 800);
-				case Elements.FireElement:
+				case Constants.Elements.FireElement:
 					return (int)(spellData.MPCost * FireMPMult);
-
-				case Elements.IceElement:
+				case Constants.Elements.IceElement:
 					return (int)(spellData.MPCost * IceMPMult);
-				case Elements.ParadoxElement when UmbralIce > 0:
+				case Constants.Elements.ParadoxElement when UmbralIce > 0:
 					return 0;
 
+				case Constants.Elements.NoElement:
+				case Constants.Elements.PolyglotElement:
+				case Constants.Elements.TransposeElement:
 				default:
 					return spellData.MPCost;
 			}
@@ -201,6 +202,9 @@ namespace BlackMage
 
 		public bool CanCastSpell(int spellId)
 		{
+			if (!player.HasMinionAttackTargetNPC)
+				return false;
+
 			if (GetSpellCost(spellId) > MP)
 				return false;
 
@@ -211,85 +215,69 @@ namespace BlackMage
 			/*if ((GlobalCooldownTimer > 0 && spellData.GlobalCooldown) || SpellCooldowns[spellId] > 0)
 				return false;*/
 
-			switch (spellData.ElementStack & Elements.ElementMask)
+			switch (spellData.Element)
 			{
-				case Elements.FireElement:
+				case Constants.Elements.FireElement:
 					if (spellData.StackRequired && AstralFire == 0)
 						return false;
 					break;
-				case Elements.IceElement:
+				case Constants.Elements.IceElement:
 					if (spellData.StackRequired && UmbralIce == 0)
 						return false;
 					break;
-				case Elements.ParadoxElement:
+				case Constants.Elements.ParadoxElement:
 					if (!ParadoxReady)
 						return false;
 					break;
-				case Elements.PolyglotElement:
+				case Constants.Elements.PolyglotElement:
 					if (Polyglots == 0)
 						return false;
+					break;
+
+				case Constants.Elements.NoElement:
+				case Constants.Elements.TransposeElement:
+				default:
 					break;
 			}
 
 			return true;
 		}
 
-		public void AddElementalStack(int elementStack)
+		public void AddElementalStack(int elementStack, bool swapElement)
 		{
-			int element = elementStack & Elements.ElementMask;
-			int stack   = elementStack & Elements.StackMask;
-
-			switch (element)
+			if (elementStack == 0)
 			{
-				case Elements.FireElement:
-					switch (stack)
-					{
-						case Elements.FullStack:
-						case Elements.HeartStack:
-							if (UmbralIce == 3 && UmbralHearts == 3)
-								ParadoxReady = true;
-							AstralFire           = MaxElementStacks;
-							ElementalChargeTimer = ElementalChargeMaxTime;
-							break;
-						case Elements.OneStack when UmbralIce > 0:
-							RemoveElementalStack();
-							break;
-						case Elements.OneStack:
-							AstralFire++;
-							ElementalChargeTimer = ElementalChargeMaxTime;
-							break;
-					}
-					break;
-				case Elements.IceElement:
-					switch (stack)
-					{
-						case Elements.FullStack:
-							if (AstralFire == 3)
-								ParadoxReady = true;
-							UmbralIce            = MaxElementStacks;
-							ElementalChargeTimer = ElementalChargeMaxTime;
-							break;
-						case Elements.OneStack when AstralFire > 0:
-							RemoveElementalStack();
-							break;
-						case Elements.OneStack:
-							UmbralIce++;
-							ElementalChargeTimer = ElementalChargeMaxTime;
-							break;
-					}
-					break;
-				case Elements.TransposeElement:
-					if (AstralFire > 0)
-					{
-						UmbralIce            = 1;
-						ElementalChargeTimer = ElementalChargeMaxTime;
-					}
-					else if (UmbralIce > 0)
-					{
-						AstralFire            = 1;
-						ElementalChargeTimer = ElementalChargeMaxTime;
-					}
-					break;
+				if (AstralFire > 0)
+					elementStack = -1;
+				if (UmbralIce > 0)
+					elementStack = 1;
+
+				ElementalCharge = 0;
+			}
+
+			if (elementStack > 0)
+			{
+				if (UmbralIce == MaxElementStacks && UmbralHearts == MaxUmbralHearts && !swapElement)
+					ParadoxReady = true;
+
+				if (UmbralIce > 0 && !swapElement)
+					RemoveElementalStack();
+				else
+					AstralFire += elementStack;
+
+				ElementalChargeTimer = ElementalChargeMaxTime;
+			}
+			else if (elementStack < 0)
+			{
+				if (AstralFire == MaxElementStacks && !swapElement)
+					ParadoxReady = true;
+
+				if (AstralFire > 0 && !swapElement)
+					RemoveElementalStack();
+				else
+					UmbralIce += elementStack;
+
+				ElementalChargeTimer = ElementalChargeMaxTime;
 			}
 		}
 
@@ -312,9 +300,8 @@ namespace BlackMage
 			Spell.SpellData spellData = Spell.Data[spellId];
 
 			MaxCastTimer = spellData.CastTime;
-			var element  = (byte)(spellData.ElementStack & Elements.ElementMask);
-			if ((element == Elements.FireElement && UmbralIce == MaxElementStacks) ||
-			    (element == Elements.IceElement && AstralFire == MaxElementStacks))
+			if ((spellData.Element == Constants.Elements.FireElement && UmbralIce == MaxElementStacks) ||
+			    (spellData.Element == Constants.Elements.IceElement && AstralFire == MaxElementStacks))
 				MaxCastTimer /= 2;
 
 			CastTimer = MaxCastTimer;
@@ -328,45 +315,31 @@ namespace BlackMage
 				return false;
 
 			Spell.SpellData spellData = Spell.Data[spellId];
-
-			int element = spellData.ElementStack & Elements.ElementMask;
-			int stack   = spellData.ElementStack & Elements.StackMask;
+			
 			int damage  = Spell.Data[spellId].Potency;
 
 			MP -= GetSpellCost(spellId);
 
-			switch (element)
+			switch (spellData.Element)
 			{
-				case Elements.FireElement:
-					if (AstralFire > 0)
-						UmbralHearts -= stack == Elements.HeartStack ? UmbralHearts : 1;
-					if (spellData.SpellName == "Flare")
-						damage = (int)(280 * FireDamageMult);
-					else
-						damage = (int)(damage * FireDamageMult);
-					if (spellData.SpellName == "Fira" && IsSpellLearned(ModContent.ProjectileType<Flare>()) &&
-					    AstralFire > 0)
-						player.AddBuff(ModContent.BuffType<EnhancedFlare>(), 18000);
-					AddElementalStack(spellData.ElementStack);
+				case Constants.Elements.FireElement:
+					if (AstralFire > 0 && UmbralHearts > 0)
+						UmbralHearts--;
+					damage = (int)(damage * FireDamageMult);
 					break;
-				case Elements.IceElement:
-					if (stack == Elements.HeartStack)
-						UmbralHearts = MaxUmbralHearts;
-					if (spellData.SpellName == "Umbral Soul")
-						UmbralHearts++;
+				case Constants.Elements.IceElement:
 					damage = (int)(damage * IceDamageMult);
-					AddElementalStack(spellData.ElementStack);
 					break;
-				case Elements.ParadoxElement:
-					ParadoxReady         = false;
-					ElementalChargeTimer = ElementalChargeMaxTime;
+				case Constants.Elements.ParadoxElement:
+					ParadoxReady = false;
 					break;
-				case Elements.PolyglotElement:
+				case Constants.Elements.PolyglotElement:
 					Polyglots--;
 					break;
-				case Elements.TransposeElement:
-					AddElementalStack(spellData.ElementStack);
-					break;
+
+				case Constants.Elements.NoElement:
+				case Constants.Elements.TransposeElement:
+				default: break;
 			}
 
 			spellData.OnCastEffect(player);

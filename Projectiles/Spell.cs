@@ -14,17 +14,18 @@ namespace BlackMage.Projectiles
 
 		public class SpellData
 		{
-			public string SpellName      { get; set; } = "";
-			public int    Potency        { get; set; } = 0;
-			public int    MPCost         { get; set; } = 0;
-			public uint   CastTime       { get; set; } = 0;
-			public uint   Cooldown       { get; set; } = 0;
-			public bool   GlobalCooldown { get; set; } = true;
-			public byte   ElementStack   { get; set; } = Elements.NoElement | Elements.NoStack;
-			public bool   StackRequired  { get; set; } = false;
-			public string Description    { get; set; } = "PLACEHOLDER\nYou shouldn't be seeing this.";
-			public int    LevelLearned   { get; set; } = 0;
+			public string             SpellName        { get; set; } = "";
+			public int                Potency          { get; set; } = 0;
+			public int                MPCost           { get; set; } = 0;
+			public uint               CastTime         { get; set; } = 0;
+			public uint               Cooldown         { get; set; } = 0;
+			public bool               GlobalCooldown   { get; set; } = true;
+			public Constants.Elements Element          { get; set; } = Constants.Elements.NoElement;
+			public bool               StackRequired    { get; set; } = false;
+			public string             Description      { get; set; } = "PLACEHOLDER\nYou shouldn't be seeing this.";
+			public int                LevelLearned     { get; set; } = 0;
 			public Action<Player>     OnCastEffect     { get; set; } = _ => throw new NotImplementedException();
+			public Func<Player, bool> ShouldButtonGlow { get; set; } = _ => false;
 		}
 
 		public const int SingleTargetSize = 5;
@@ -119,9 +120,14 @@ namespace BlackMage.Projectiles
 				CastTime       = 150,
 				Cooldown       = 0,
 				GlobalCooldown = true,
-				ElementStack   = Elements.IceElement | Elements.OneStack,
+				Element        = Constants.Elements.IceElement,
 				StackRequired  = false,
 				LevelLearned   = 1,
+				OnCastEffect = player =>
+				{
+					var blm = player.GetModPlayer<BlackMagePlayer>();
+					blm.AddElementalStack(-1, false);
+				},
 			};
 			Data[projectile.type].Description =
 				$"Deals ice damage with a potency of {Data[projectile.type].Potency}.\n" +
@@ -145,11 +151,14 @@ namespace BlackMage.Projectiles
 				CastTime       = 150,
 				Cooldown       = 0,
 				GlobalCooldown = true,
-				ElementStack   = Elements.FireElement | Elements.OneStack,
+				Element        = Constants.Elements.FireElement,
 				StackRequired  = false,
 				LevelLearned   = 2,
 				OnCastEffect = player =>
 				{
+					var blm = player.GetModPlayer<BlackMagePlayer>();
+					blm.AddElementalStack(1, false);
+
 					if (blm.SoulCrystalLevel < 42 || Main.rand.Next(0, 9) >= 4)
 						return;
 
@@ -233,11 +242,16 @@ namespace BlackMage.Projectiles
 				CastTime       = 0,
 				Cooldown       = 300,
 				GlobalCooldown = false,
-				ElementStack   = Elements.TransposeElement | Elements.OneStack,
+				Element        = Constants.Elements.TransposeElement,
 				StackRequired  = false,
 				Description =
 					"Swaps [Astral Fire] with a single [Umbral Ice], or [Umbral Ice] with a single [Astral Fire].",
 				LevelLearned = 4,
+				OnCastEffect = player =>
+				{
+					var blm = player.GetModPlayer<BlackMagePlayer>();
+					blm.AddElementalStack(0, true);
+				},
 			};
 			base.SetStaticDefaults();
 		}
@@ -262,9 +276,14 @@ namespace BlackMage.Projectiles
 				CastTime       = 180,
 				Cooldown       = 0,
 				GlobalCooldown = true,
-				ElementStack   = Elements.IceElement | Elements.FullStack,
+				Element        = Constants.Elements.IceElement,
 				StackRequired  = false,
 				LevelLearned   = 12,
+				OnCastEffect = player =>
+				{
+					var blm = player.GetModPlayer<BlackMagePlayer>();
+					blm.AddElementalStack(-BlackMagePlayer.MaxElementStacks, true);
+				},
 			};
 			Data[projectile.type].Description =
 				$"Deals ice damage with a potency of {Data[projectile.type].Potency} to target and all enemies nearby it.\n" +
@@ -288,7 +307,7 @@ namespace BlackMage.Projectiles
 				CastTime       = 0,
 				Cooldown       = 0,
 				GlobalCooldown = true,
-				ElementStack   = Elements.NoElement | Elements.NoStack,
+				Element        = Constants.Elements.NoElement,
 				StackRequired  = false,
 				LevelLearned   = 0,
 			};
@@ -324,9 +343,14 @@ namespace BlackMage.Projectiles
 				CastTime       = 180,
 				Cooldown       = 0,
 				GlobalCooldown = true,
-				ElementStack   = Elements.FireElement | Elements.FullStack,
+				Element        = Constants.Elements.FireElement,
 				StackRequired  = false,
 				LevelLearned   = 18,
+				OnCastEffect = player =>
+				{
+					var blm = player.GetModPlayer<BlackMagePlayer>();
+					blm.AddElementalStack(BlackMagePlayer.MaxElementStacks, true);
+				},
 			};
 			Data[projectile.type].Description =
 				$"Deals fire damage with a potency of {Data[projectile.type].Potency} to target and all enemies nearby it.\n" +
@@ -350,7 +374,7 @@ namespace BlackMage.Projectiles
 				CastTime       = 210,
 				Cooldown       = 0,
 				GlobalCooldown = true,
-				ElementStack   = Elements.FireElement | Elements.FullStack,
+				Element        = Constants.Elements.FireElement,
 				StackRequired  = false,
 				LevelLearned   = 35,
 				OnCastEffect = player =>
@@ -358,6 +382,7 @@ namespace BlackMage.Projectiles
 					var blm    = player.GetModPlayer<BlackMagePlayer>();
 					if (blm.Firestarter)
 						player.ClearBuff(ModContent.BuffType<Firestarter>());
+					blm.AddElementalStack(BlackMagePlayer.MaxElementStacks, true);
 				},
 			};
 			Data[projectile.type].Description =
@@ -382,9 +407,14 @@ namespace BlackMage.Projectiles
 				CastTime       = 210,
 				Cooldown       = 0,
 				GlobalCooldown = true,
-				ElementStack   = Elements.IceElement | Elements.FullStack,
+				Element        = Constants.Elements.IceElement,
 				StackRequired  = false,
 				LevelLearned   = 35,
+				OnCastEffect = player =>
+				{
+					var blm = player.GetModPlayer<BlackMagePlayer>();
+					blm.AddElementalStack(-BlackMagePlayer.MaxElementStacks, true);
+				},
 			};
 			Data[projectile.type].Description =
 				$"Deals ice damage with a potency of {Data[projectile.type].Potency}.\n" +
@@ -408,9 +438,14 @@ namespace BlackMage.Projectiles
 				CastTime       = 168,
 				Cooldown       = 0,
 				GlobalCooldown = true,
-				ElementStack   = Elements.IceElement | Elements.HeartStack,
+				Element        = Constants.Elements.IceElement,
 				StackRequired  = true,
 				LevelLearned   = 40,
+				OnCastEffect = player =>
+				{
+					var blm = player.GetModPlayer<BlackMagePlayer>();
+					blm.UmbralHearts = BlackMagePlayer.MaxUmbralHearts;
+				},
 			};
 			Data[projectile.type].Description =
 				$"Deals ice damage with a potency of {Data[projectile.type].Potency} to target and all enemies nearby it.\n" +
@@ -435,9 +470,14 @@ namespace BlackMage.Projectiles
 				CastTime       = 240,
 				Cooldown       = 0,
 				GlobalCooldown = true,
-				ElementStack   = Elements.FireElement | Elements.HeartStack,
+				Element        = Constants.Elements.FireElement,
 				StackRequired  = true,
 				LevelLearned   = 50,
+				OnCastEffect = player =>
+				{
+					var blm = player.GetModPlayer<BlackMagePlayer>();
+					blm.UmbralHearts = 0;
+				},
 			};
 			Data[projectile.type].Description =
 				$"Deals fire damage with a potency of {Data[projectile.type].Potency} to target and all enemies nearby it.\n" +
@@ -462,9 +502,14 @@ namespace BlackMage.Projectiles
 				CastTime       = 150,
 				Cooldown       = 0,
 				GlobalCooldown = true,
-				ElementStack   = Elements.IceElement | Elements.HeartStack,
+				Element        = Constants.Elements.IceElement,
 				StackRequired  = true,
 				LevelLearned   = 58,
+				OnCastEffect = player =>
+				{
+					var    blm    = player.GetModPlayer<BlackMagePlayer>();
+					blm.UmbralHearts = BlackMagePlayer.MaxUmbralHearts;
+				},
 			};
 			Data[projectile.type].Description =
 				$"Deals ice damage with a potency of {Data[projectile.type].Potency}.\n" +
@@ -489,9 +534,13 @@ namespace BlackMage.Projectiles
 				CastTime       = 168,
 				Cooldown       = 0,
 				GlobalCooldown = true,
-				ElementStack   = Elements.FireElement | Elements.NoStack,
+				Element        = Constants.Elements.FireElement,
 				StackRequired  = true,
 				LevelLearned   = 60,
+				OnCastEffect = player =>
+				{
+					var blm = player.GetModPlayer<BlackMagePlayer>();
+				},
 			};
 			Data[projectile.type].Description =
 				$"Deals fire damage with a potency of {Data[projectile.type].Potency}.\n" +
@@ -514,7 +563,7 @@ namespace BlackMage.Projectiles
 				CastTime       = 0,
 				Cooldown       = 0,
 				GlobalCooldown = true,
-				ElementStack   = Elements.PolyglotElement | Elements.NoStack,
+				Element        = Constants.Elements.PolyglotElement,
 				StackRequired  = false,
 				LevelLearned   = 70,
 			};
@@ -539,9 +588,14 @@ namespace BlackMage.Projectiles
 				CastTime       = 180,
 				Cooldown       = 0,
 				GlobalCooldown = true,
-				ElementStack   = Elements.FireElement | Elements.FullStack,
+				Element        = Constants.Elements.FireElement,
 				StackRequired  = true,
 				LevelLearned   = 72,
+				OnCastEffect = player =>
+				{
+					var blm = player.GetModPlayer<BlackMagePlayer>();
+					blm.AddElementalStack(BlackMagePlayer.MaxElementStacks, false);
+				},
 			};
 			Data[projectile.type].Description =
 				$"Deals fire damage with a potency of {Data[projectile.type].Potency}.\n" +
@@ -566,12 +620,18 @@ namespace BlackMage.Projectiles
 				CastTime       = 0,
 				Cooldown       = 150,
 				GlobalCooldown = false,
-				ElementStack   = Elements.IceElement | Elements.OneStack,
+				Element        = Constants.Elements.IceElement,
 				StackRequired  = true,
 				LevelLearned   = 76,
 				Description = "Grants [Umbral Ice] and 1 [Umbral Heart].\n" +
 				              "[Umbral Heart] Bonus: Nullifies [Astral Fire]'s [MP] cost increase for [Fire] spells and reduces [MP] cost for [Flare] by one-third\n" +
 				              "Can only be executed while under the effect of [Umbral Ice].",
+				OnCastEffect = player =>
+				{
+					var blm = player.GetModPlayer<BlackMagePlayer>();
+					blm.AddElementalStack(-1, false);
+					blm.UmbralHearts++;
+				},
 			};
 			base.SetStaticDefaults();
 		}
@@ -596,9 +656,13 @@ namespace BlackMage.Projectiles
 				CastTime       = 0,
 				Cooldown       = 0,
 				GlobalCooldown = true,
-				ElementStack   = Elements.PolyglotElement | Elements.NoStack,
+				Element        = Constants.Elements.PolyglotElement,
 				StackRequired  = false,
 				LevelLearned   = 80,
+				OnCastEffect = player =>
+				{
+					var blm = player.GetModPlayer<BlackMagePlayer>();
+				},
 			};
 			Data[projectile.type].Description =
 				$"Deals unaspected damage with a potency of {Data[projectile.type].Potency}.\n" +
@@ -621,12 +685,13 @@ namespace BlackMage.Projectiles
 				CastTime       = 150,
 				Cooldown       = 0,
 				GlobalCooldown = true,
-				ElementStack   = Elements.ParadoxElement | Elements.NoStack,
+				Element        = Constants.Elements.ParadoxElement,
 				StackRequired  = false,
 				LevelLearned   = 90,
 				OnCastEffect = player =>
 				{
 					var blm = player.GetModPlayer<BlackMagePlayer>();
+					blm.ElementalChargeTimer = BlackMagePlayer.ElementalChargeMaxTime;
 
 					if (blm.AstralFire == 0 || blm.SoulCrystalLevel < 42 || Main.rand.Next(0, 9) >= 4)
 						return;

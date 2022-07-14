@@ -5,9 +5,9 @@ using Terraria;
 
 namespace BlackMage
 {
-	internal static class Constants
+	public static class Constants
 	{
-		internal static class Colors
+		public static class Colors
 		{
 			public static readonly Color BlackMage           = new Color(0x60, 0x46, 0x88);
 			public static readonly Color MPTopDark           = new Color(0xaf, 0x2c, 0x64);
@@ -24,12 +24,22 @@ namespace BlackMage
 			public static readonly Color PolyglotBottomLight = new Color(0xac, 0x6b, 0xbf);
 		}
 
-		internal static string ReplaceKeywords(string inStr)
+		public enum Elements : byte
+		{
+			NoElement        = 0,
+			FireElement      = 1,
+			IceElement       = 2,
+			PolyglotElement  = 3,
+			ParadoxElement   = 4,
+			TransposeElement = 5,
+		}
+
+		public static string ReplaceKeywords(string inStr)
 		{
 			return Keywords.Aggregate(inStr, (current, keyword) => current.Replace(keyword.Key, keyword.Value));
 		}
 
-		internal static Dictionary<string, string> Keywords = new Dictionary<string, string>()
+		public static Dictionary<string, string> Keywords = new Dictionary<string, string>()
 		{
 			{ "[MP]", $"[c/{Colors.MP.Hex3()}:MP]" },
 			{ "[Astral Fire]", $"[c/{Colors.Fire.Hex3()}:Astral Fire]" },

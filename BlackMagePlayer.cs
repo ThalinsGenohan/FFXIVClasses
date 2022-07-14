@@ -16,10 +16,10 @@ namespace BlackMage
 		public const float ElementalChargeSeconds = 15f;
 		public const float PolyglotChargeSeconds  = 30f;
 
-		public const uint GlobalCooldownMaxTime  = (int)(GlobalCooldownSeconds * 60);  // 150
-		public const uint MPTickMaxTime          = (int)(MPTickSeconds * 60);          // 150
-		public const uint ElementalChargeMaxTime = (int)(ElementalChargeSeconds * 60); // 900
-		public const uint PolyglotMaxTime        = (int)(PolyglotChargeSeconds * 60);  // 1800
+		public const uint GlobalCooldownMaxTime  = (uint)(GlobalCooldownSeconds * 60);  // 150
+		public const uint MPTickMaxTime          = (uint)(MPTickSeconds * 60);          // 150
+		public const uint ElementalChargeMaxTime = (uint)(ElementalChargeSeconds * 60); // 900
+		public const uint PolyglotMaxTime        = (uint)(PolyglotChargeSeconds * 60);  // 1800
 		public const int  MaxMP                  = 10000;
 
 		public const int MaxElementStacks = 3;

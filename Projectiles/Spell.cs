@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using BlackMage.Buffs;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;

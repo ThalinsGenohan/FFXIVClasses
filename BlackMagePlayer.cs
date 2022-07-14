@@ -108,7 +108,6 @@ namespace BlackMage
 			set => _paradoxReady = value && CanUseParadox;
 		}
 
-		public bool EnhancedFlare { get; set; }
 
 		public int? CurrentSpell { get; set; } = null;
 
@@ -173,7 +172,6 @@ namespace BlackMage
 		public override void ResetEffects()
 		{
 			SoulCrystalLevel = 0;
-			EnhancedFlare    = false;
 		}
 
 		public bool IsSpellLearned(int spellId) => SoulCrystalLevel >= Spell.Data[spellId].LevelLearned;

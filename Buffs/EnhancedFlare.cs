@@ -23,7 +23,7 @@ namespace BlackMage.Buffs
 				return;
 			}
 
-			blm.EnhancedFlare = true;
+			//blm.EnhancedFlare = true;
 		}
 	}
 }

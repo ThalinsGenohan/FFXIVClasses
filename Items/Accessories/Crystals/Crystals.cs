@@ -100,7 +100,6 @@ namespace BlackMage.Items.Accessories.Crystals
 
 		protected override string UnlocksTooltip =>
 			"Allows you to cast [Flare] and [Freeze].\n" +
-			"Casting [Fira] while under [Astral Fire] grants [Enhanced Flare], increasing the potency of [Flare] until [Astral Fire] ends.\n" +
 			"Casting [Fire] has a 40% chance to make your next [Firaga] cost no [MP] and have no cast time.";
 
 		public override void AddRecipes()

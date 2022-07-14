@@ -331,9 +331,7 @@ namespace BlackMage.Projectiles
 			Data[projectile.type].Description =
 				$"Deals fire damage with a potency of {Data[projectile.type].Potency} to target and all enemies nearby it.\n" +
 				"Additional Effect: Grants [Astral Fire III] and removes [Umbral Ice]\n" +
-				$"Duration: {BlackMagePlayer.ElementalChargeSeconds}s\n" +
-				"[Astral Fire] Bonus: Grants [Enhanced Flare]\n" +
-				"Effect is canceled if [Astral Fire] ends.";
+				$"Duration: {BlackMagePlayer.ElementalChargeSeconds}s";
 			base.SetStaticDefaults();
 		}
 	}
@@ -432,7 +430,7 @@ namespace BlackMage.Projectiles
 			Data[projectile.type] = new SpellData
 			{
 				SpellName      = "Flare",
-				Potency        = 220,
+				Potency        = 280,
 				MPCost         = -1,
 				CastTime       = 240,
 				Cooldown       = 0,
@@ -443,7 +441,6 @@ namespace BlackMage.Projectiles
 			};
 			Data[projectile.type].Description =
 				$"Deals fire damage with a potency of {Data[projectile.type].Potency} to target and all enemies nearby it.\n" +
-				"[Enhanced Flare] Potency: 280\n" +
 				"Additional Effect: Grants [Astral Fire III]\n" +
 				$"Duration: {BlackMagePlayer.ElementalChargeSeconds}s\n" +
 				"Can only be executed while under the effect of [Astral Fire].";

@@ -71,17 +71,11 @@ namespace BlackMage
 					_castbarUI.SetState(Castbar);
 				if (_elementalGaugeUI.CurrentState == null)
 					_elementalGaugeUI.SetState(SimpleElementalGauge);
-				if (player.HasMinionAttackTargetNPC)
-				{
-					if (_spellUI.CurrentState == null)
-						_spellUI.SetState(SpellUI);
+				if (_spellUI.CurrentState == null)
+					_spellUI.SetState(SpellUI);
 
-					var spellUI = (SpellUI)_spellUI.CurrentState;
-					if (spellUI.ButtonCount == 0)
-						spellUI.RefreshSpells();
-				}
-				else if (_spellUI.CurrentState != null)
-					_spellUI.SetState(null);
+				if (SpellUI.ButtonCount == 0)
+					SpellUI.RefreshSpells();
 			}
 
 			_mpBarUI.Update(gameTime);

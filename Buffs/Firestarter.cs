@@ -5,7 +5,7 @@ namespace BlackMage.Buffs
 {
 	public class Firestarter : ModBuff
 	{
-		public override void SetDefaults()
+		public override void SetStaticDefaults()
 		{
 			DisplayName.SetDefault("Firestarter");
 			Description.SetDefault("Next [Firaga] costs no MP and has no cast time");

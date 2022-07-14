@@ -28,11 +28,11 @@ namespace BlackMage.Items.Accessories.Crystals
 
 		public override void SetDefaults()
 		{
-			item.width     = Width;
-			item.height    = Height;
-			item.accessory = true;
-			item.value     = Value;
-			item.rare      = Rarity;
+			Item.width     = Width;
+			Item.height    = Height;
+			Item.accessory = true;
+			Item.value     = Value;
+			Item.rare      = Rarity;
 		}
 
 		public override void UpdateAccessory(Player player, bool hideVisual)
@@ -68,11 +68,10 @@ namespace BlackMage.Items.Accessories.Crystals
 
 		public override void AddRecipes()
 		{
-			var recipe = new ModRecipe(mod);
+			var recipe = CreateRecipe();
 			recipe.AddIngredient(ModContent.ItemType<BLMCrystalLv10>());
 			recipe.AddIngredient(ItemID.Meteorite);
-			recipe.SetResult(this);
-			recipe.AddRecipe();
+			recipe.Register();
 		}
 	}
 
@@ -86,11 +85,10 @@ namespace BlackMage.Items.Accessories.Crystals
 
 		public override void AddRecipes()
 		{
-			var recipe = new ModRecipe(mod);
+			var recipe = CreateRecipe();
 			recipe.AddIngredient(ModContent.ItemType<BLMCrystalLv20>());
 			recipe.AddIngredient(ItemID.Hellstone);
-			recipe.SetResult(this);
-			recipe.AddRecipe();
+			recipe.Register();
 		}
 	}
 
@@ -104,11 +102,10 @@ namespace BlackMage.Items.Accessories.Crystals
 
 		public override void AddRecipes()
 		{
-			var recipe = new ModRecipe(mod);
+			var recipe = CreateRecipe();
 			recipe.AddIngredient(ModContent.ItemType<BLMCrystalLv35>());
 			recipe.AddIngredient(ItemID.SoulofNight);
-			recipe.SetResult(this);
-			recipe.AddRecipe();
+			recipe.Register();
 		}
 	}
 
@@ -123,11 +120,10 @@ namespace BlackMage.Items.Accessories.Crystals
 
 		public override void AddRecipes()
 		{
-			var recipe = new ModRecipe(mod);
+			var recipe = CreateRecipe();
 			recipe.AddIngredient(ModContent.ItemType<BLMCrystalLv50>());
 			recipe.AddIngredient(ItemID.SoulofMight);
-			recipe.SetResult(this);
-			recipe.AddRecipe();
+			recipe.Register();
 		}
 	}
 
@@ -141,11 +137,10 @@ namespace BlackMage.Items.Accessories.Crystals
 
 		public override void AddRecipes()
 		{
-			var recipe = new ModRecipe(mod);
+			var recipe = CreateRecipe();
 			recipe.AddIngredient(ModContent.ItemType<BLMCrystalLv60>());
 			recipe.AddIngredient(ItemID.Ectoplasm);
-			recipe.SetResult(this);
-			recipe.AddRecipe();
+			recipe.Register();
 		}
 	}
 
@@ -158,11 +153,10 @@ namespace BlackMage.Items.Accessories.Crystals
 
 		public override void AddRecipes()
 		{
-			var recipe = new ModRecipe(mod);
+			var recipe = CreateRecipe();
 			recipe.AddIngredient(ModContent.ItemType<BLMCrystalLv70>());
 			recipe.AddIngredient(ItemID.BeetleHusk);
-			recipe.SetResult(this);
-			recipe.AddRecipe();
+			recipe.Register();
 		}
 	}
 
@@ -177,11 +171,10 @@ namespace BlackMage.Items.Accessories.Crystals
 
 		public override void AddRecipes()
 		{
-			var recipe = new ModRecipe(mod);
+			var recipe = CreateRecipe();
 			recipe.AddIngredient(ModContent.ItemType<BLMCrystalLv75>());
 			recipe.AddTile(TileID.LunarCraftingStation);
-			recipe.SetResult(this);
-			recipe.AddRecipe();
+			recipe.Register();
 		}
 	}
 
@@ -195,11 +188,10 @@ namespace BlackMage.Items.Accessories.Crystals
 
 		public override void AddRecipes()
 		{
-			var recipe = new ModRecipe(mod);
+			var recipe = CreateRecipe();
 			recipe.AddIngredient(ModContent.ItemType<BLMCrystalLv80>());
 			recipe.AddIngredient(ItemID.FragmentNebula);
-			recipe.SetResult(this);
-			recipe.AddRecipe();
+			recipe.Register();
 		}
 	}
 }

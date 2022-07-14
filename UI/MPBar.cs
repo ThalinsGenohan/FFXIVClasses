@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.GameContent.UI.Elements;
 using Terraria.ModLoader;
 using Terraria.UI;
@@ -84,13 +85,13 @@ namespace BlackMage.UI
 					size = 4;
 				}
 
-				spriteBatch.Draw(Main.magicPixel,
+				spriteBatch.Draw(TextureAssets.MagicPixel.Value,
 				                 new Rectangle(left + i, (int)Math.Round(hitbox.Y + (hitbox.Height / 2f - size)), 1, size),
 				                 Color.Lerp(Constants.Colors.MPTopDark,
 				                            Constants.Colors.MPTopLight,
 				                            i / (float)steps
 				                 ));
-				spriteBatch.Draw(Main.magicPixel,
+				spriteBatch.Draw(TextureAssets.MagicPixel.Value,
 				                 new Rectangle(left + i, (int)Math.Round(hitbox.Y + hitbox.Height / 2f), 1, size),
 				                 Color.Lerp(Constants.Colors.MPBottomDark,
 				                            Constants.Colors.MPBottomLight,

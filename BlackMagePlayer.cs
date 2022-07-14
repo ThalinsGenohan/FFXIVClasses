@@ -202,7 +202,7 @@ namespace BlackMage
 
 		public bool CanCastSpell(int spellId)
 		{
-			if (!player.HasMinionAttackTargetNPC)
+			if (!Player.HasMinionAttackTargetNPC)
 				return false;
 
 			if (GetSpellCost(spellId) > MP)
@@ -342,12 +342,12 @@ namespace BlackMage
 				default: break;
 			}
 
-			spellData.OnCastEffect(player);
+			spellData.OnCastEffect(Player);
 
 			SpellCooldowns[spellId] = spellData.Cooldown;
 
 			if (damage > 0)
-				Projectile.NewProjectile(player.position, Vector2.Zero, spellId, damage, 0f, player.whoAmI);
+				Projectile.NewProjectile(Player.position, Vector2.Zero, spellId, damage, 0f, Player.whoAmI);
 
 			return true;
 		}

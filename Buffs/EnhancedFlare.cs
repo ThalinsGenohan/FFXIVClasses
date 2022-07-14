@@ -5,7 +5,7 @@ namespace BlackMage.Buffs
 {
 	public class EnhancedFlare : ModBuff
 	{
-		public override void SetDefaults()
+		public override void SetStaticDefaults()
 		{
 			DisplayName.SetDefault("Enhanced Flare");
 			Description.SetDefault("Increases potency of Flare");

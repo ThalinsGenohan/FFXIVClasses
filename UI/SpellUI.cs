@@ -5,6 +5,7 @@ using BlackMage.Projectiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.GameContent.UI.Elements;
 using Terraria.ModLoader;
 using Terraria.UI;
@@ -165,13 +166,13 @@ namespace BlackMage.UI
 						{
 							for (int x = left; x < left + size; x++)
 							{
-								spriteBatch.Draw(Main.magicPixel, new Rectangle(x, y, 1, 1), Color.White);
+								spriteBatch.Draw(TextureAssets.MagicPixel.Value, new Rectangle(x, y, 1, 1), Color.White);
 							}
 
 							continue;
 						}
-						spriteBatch.Draw(Main.magicPixel, new Rectangle(left,        y, 1, 1), Color.White);
-						spriteBatch.Draw(Main.magicPixel, new Rectangle(left + size, y, 1, 1), Color.White);
+						spriteBatch.Draw(TextureAssets.MagicPixel.Value, new Rectangle(left,        y, 1, 1), Color.White);
+						spriteBatch.Draw(TextureAssets.MagicPixel.Value, new Rectangle(left + size, y, 1, 1), Color.White);
 					}
 				}
 
@@ -188,7 +189,7 @@ namespace BlackMage.UI
 				{
 					if (BLM.MP >= BLM.GetSpellCost(_spellId.Value))
 						ManaText.TextColor *= 0.6f;
-					spriteBatch.Draw(Main.magicPixel,
+					spriteBatch.Draw(TextureAssets.MagicPixel.Value,
 					                 new Rectangle(left, top, size, size),
 					                 new Color(0f, 0f, 0f, 0.5f));
 				}
@@ -236,13 +237,13 @@ namespace BlackMage.UI
 
 					if (distance > radius || angle > maxAngle)
 					{
-						spriteBatch.Draw(Main.magicPixel, new Rectangle(x, y, 1, 1), new Color(0f, 0f, 0f, 0.5f));
+						spriteBatch.Draw(TextureAssets.MagicPixel.Value, new Rectangle(x, y, 1, 1), new Color(0f, 0f, 0f, 0.5f));
 					}
 					else if (distance > radius - BorderThickness || distance < BorderThickness ||
 					         (distFromAngle <= BorderThickness && maxAngle - angle < twoPi / 4f) ||
 					         (x - center.X < BorderThickness && x >= center.X && y <= center.Y))
 					{
-						spriteBatch.Draw(Main.magicPixel, new Rectangle(x, y, 1, 1), new Color(1f, 1f, 1f, 1f));
+						spriteBatch.Draw(TextureAssets.MagicPixel.Value, new Rectangle(x, y, 1, 1), new Color(1f, 1f, 1f, 1f));
 					}
 				}
 			}

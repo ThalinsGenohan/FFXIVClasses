@@ -37,23 +37,23 @@ namespace BlackMage.Projectiles
 
 		public override void SetStaticDefaults()
 		{
-			DisplayName.SetDefault(Data[projectile.type].SpellName);
-			ProjectileID.Sets.Homing[projectile.type]                  = true;
-			ProjectileID.Sets.MinionTargettingFeature[projectile.type] = true;
+			DisplayName.SetDefault(Data[Projectile.type].SpellName);
+			ProjectileID.Sets.CultistIsResistantTo[Projectile.type]                  = true;
+			ProjectileID.Sets.MinionTargettingFeature[Projectile.type] = true;
 		}
 
 		public override void SetDefaults()
 		{
-			projectile.width                = AoE ? AoESize : SingleTargetSize;
-			projectile.height               = AoE ? AoESize : SingleTargetSize;
-			projectile.friendly             = true;
-			projectile.magic                = true;
-			projectile.knockBack            = 0f;
-			projectile.tileCollide          = false;
-			projectile.penetrate            = AoE ? -1 : 1;
-			projectile.timeLeft             = 120;
-			projectile.usesLocalNPCImmunity = true;
-			projectile.localNPCHitCooldown  = -1;
+			Projectile.width                = AoE ? AoESize : SingleTargetSize;
+			Projectile.height               = AoE ? AoESize : SingleTargetSize;
+			Projectile.friendly             = true;
+			Projectile.DamageType                = DamageClass.Magic;
+			Projectile.knockBack            = 0f;
+			Projectile.tileCollide          = false;
+			Projectile.penetrate            = AoE ? -1 : 1;
+			Projectile.timeLeft             = 120;
+			Projectile.usesLocalNPCImmunity = true;
+			Projectile.localNPCHitCooldown  = -1;
 		}
 
 		public override bool? CanHitNPC(NPC target)
@@ -80,14 +80,14 @@ namespace BlackMage.Projectiles
 				return;
 			}
 
-			Player  player       = Main.player[projectile.owner];
-			Vector2 targetCenter = projectile.position;
+			Player  player       = Main.player[Projectile.owner];
+			Vector2 targetCenter = Projectile.position;
 			var     foundTarget  = false;
 
 			if (player.HasMinionAttackTargetNPC)
 			{
 				NPC   npc     = Main.npc[player.MinionAttackTargetNPC];
-				float between = Vector2.Distance(npc.Center, projectile.Center);
+				float between = Vector2.Distance(npc.Center, Projectile.Center);
 				if (between < 2000f)
 				{
 					targetCenter = npc.Center;
@@ -98,11 +98,11 @@ namespace BlackMage.Projectiles
 
 			if (!foundTarget)
 			{
-				projectile.Kill();
+				Projectile.Kill();
 				return;
 			}
 
-			projectile.Center = targetCenter;
+			Projectile.Center = targetCenter;
 		}
 	}
 
@@ -112,7 +112,7 @@ namespace BlackMage.Projectiles
 
 		public override void SetStaticDefaults()
 		{
-			Data[projectile.type] = new SpellData
+			Data[Projectile.type] = new SpellData
 			{
 				SpellName      = "Blizzard",
 				Potency        = 180,
@@ -129,8 +129,8 @@ namespace BlackMage.Projectiles
 					blm.AddElementalStack(-1, false);
 				},
 			};
-			Data[projectile.type].Description =
-				$"Deals ice damage with a potency of {Data[projectile.type].Potency}.\n" +
+			Data[Projectile.type].Description =
+				$"Deals ice damage with a potency of {Data[Projectile.type].Potency}.\n" +
 				"Additional Effect: Grants [Umbral Ice] or removes [Astral Fire]\n" +
 				$"Duration: {BlackMagePlayer.ElementalChargeSeconds}s";
 			base.SetStaticDefaults();
@@ -143,7 +143,7 @@ namespace BlackMage.Projectiles
 
 		public override void SetStaticDefaults()
 		{
-			Data[projectile.type] = new SpellData
+			Data[Projectile.type] = new SpellData
 			{
 				SpellName      = "Fire",
 				Potency        = 180,
@@ -165,8 +165,8 @@ namespace BlackMage.Projectiles
 					player.AddBuff(ModContent.BuffType<Firestarter>(), 1800);
 				},
 			};
-			Data[projectile.type].Description =
-				$"Deals fire damage with a potency of {Data[projectile.type].Potency}.\n" +
+			Data[Projectile.type].Description =
+				$"Deals fire damage with a potency of {Data[Projectile.type].Potency}.\n" +
 				"Additional Effect: Grants [Astral Fire] or removes [Umbral Ice]\n" +
 				$"Duration: {BlackMagePlayer.ElementalChargeSeconds}s\n" +
 				"Additional Effect: 40% chance the next [Firaga] will cost no [MP] and have no cast time\n" +
@@ -176,14 +176,14 @@ namespace BlackMage.Projectiles
 
 		public override void AI()
 		{
-			Player  player       = Main.player[projectile.owner];
-			Vector2 targetCenter = projectile.position;
+			Player  player       = Main.player[Projectile.owner];
+			Vector2 targetCenter = Projectile.position;
 			var     foundTarget  = false;
 
 			if (player.HasMinionAttackTargetNPC)
 			{
 				NPC   npc     = Main.npc[player.MinionAttackTargetNPC];
-				float between = Vector2.Distance(npc.Center, projectile.Center);
+				float between = Vector2.Distance(npc.Center, Projectile.Center);
 				if (between < 2000f)
 				{
 					targetCenter = npc.Center;
@@ -199,8 +199,8 @@ namespace BlackMage.Projectiles
 					NPC npc = Main.npc[i];
 					if (!npc.CanBeChasedBy()) continue;
 
-					float npcDistance = Vector2.Distance(npc.Center, projectile.Center);
-					bool  closest     = Vector2.Distance(projectile.Center, targetCenter) > npcDistance;
+					float npcDistance = Vector2.Distance(npc.Center, Projectile.Center);
+					bool  closest     = Vector2.Distance(Projectile.Center, targetCenter) > npcDistance;
 
 					if (!closest && foundTarget) continue;
 
@@ -212,19 +212,19 @@ namespace BlackMage.Projectiles
 
 			if (!foundTarget)
 			{
-				projectile.Kill();
+				Projectile.Kill();
 				return;
 			}
 
 			const float speed   = 24f;
 			const float inertia = 8f;
 
-			if (!(Vector2.Distance(projectile.Center, targetCenter) > 40f)) return;
+			if (!(Vector2.Distance(Projectile.Center, targetCenter) > 40f)) return;
 
-			Vector2 direction = targetCenter - projectile.Center;
+			Vector2 direction = targetCenter - Projectile.Center;
 			direction.Normalize();
 			direction           *= speed;
-			projectile.velocity =  (projectile.velocity * (inertia - 1) + direction) / inertia;
+			Projectile.velocity =  (Projectile.velocity * (inertia - 1) + direction) / inertia;
 		}
 	}
 
@@ -234,7 +234,7 @@ namespace BlackMage.Projectiles
 
 		public override void SetStaticDefaults()
 		{
-			Data[projectile.type] = new SpellData
+			Data[Projectile.type] = new SpellData
 			{
 				SpellName      = "Transpose",
 				Potency        = 0,
@@ -258,7 +258,7 @@ namespace BlackMage.Projectiles
 
 		public override void AI()
 		{
-			projectile.Kill();
+			Projectile.Kill();
 		}
 	}
 
@@ -268,7 +268,7 @@ namespace BlackMage.Projectiles
 
 		public override void SetStaticDefaults()
 		{
-			Data[projectile.type] = new SpellData
+			Data[Projectile.type] = new SpellData
 			{
 				SpellName      = "Blizzara",
 				Potency        = 100,
@@ -285,8 +285,8 @@ namespace BlackMage.Projectiles
 					blm.AddElementalStack(-BlackMagePlayer.MaxElementStacks, true);
 				},
 			};
-			Data[projectile.type].Description =
-				$"Deals ice damage with a potency of {Data[projectile.type].Potency} to target and all enemies nearby it.\n" +
+			Data[Projectile.type].Description =
+				$"Deals ice damage with a potency of {Data[Projectile.type].Potency} to target and all enemies nearby it.\n" +
 				"Additional Effect: Grants [Umbral Ice] III and removes [Astral Fire]\n" +
 				$"Duration: {BlackMagePlayer.ElementalChargeSeconds}s";
 			base.SetStaticDefaults();
@@ -299,7 +299,7 @@ namespace BlackMage.Projectiles
 
 		public override void SetStaticDefaults()
 		{
-			Data[projectile.type] = new SpellData
+			Data[Projectile.type] = new SpellData
 			{
 				SpellName      = "Scathe",
 				Potency        = 100,
@@ -311,8 +311,8 @@ namespace BlackMage.Projectiles
 				StackRequired  = false,
 				LevelLearned   = 0,
 			};
-			Data[projectile.type].Description =
-				$"Deals unaspected damage with a potency of {Data[projectile.type].Potency}.\n" +
+			Data[Projectile.type].Description =
+				$"Deals unaspected damage with a potency of {Data[Projectile.type].Potency}.\n" +
 				"Additional Effect: 20% chance potency will double";
 			base.SetStaticDefaults();
 		}
@@ -335,7 +335,7 @@ namespace BlackMage.Projectiles
 
 		public override void SetStaticDefaults()
 		{
-			Data[projectile.type] = new SpellData
+			Data[Projectile.type] = new SpellData
 			{
 				SpellName      = "Fira",
 				Potency        = 100,
@@ -352,8 +352,8 @@ namespace BlackMage.Projectiles
 					blm.AddElementalStack(BlackMagePlayer.MaxElementStacks, true);
 				},
 			};
-			Data[projectile.type].Description =
-				$"Deals fire damage with a potency of {Data[projectile.type].Potency} to target and all enemies nearby it.\n" +
+			Data[Projectile.type].Description =
+				$"Deals fire damage with a potency of {Data[Projectile.type].Potency} to target and all enemies nearby it.\n" +
 				"Additional Effect: Grants [Astral Fire III] and removes [Umbral Ice]\n" +
 				$"Duration: {BlackMagePlayer.ElementalChargeSeconds}s";
 			base.SetStaticDefaults();
@@ -366,7 +366,7 @@ namespace BlackMage.Projectiles
 
 		public override void SetStaticDefaults()
 		{
-			Data[projectile.type] = new SpellData
+			Data[Projectile.type] = new SpellData
 			{
 				SpellName      = "Firaga",
 				Potency        = 260,
@@ -385,8 +385,8 @@ namespace BlackMage.Projectiles
 					blm.AddElementalStack(BlackMagePlayer.MaxElementStacks, true);
 				},
 			};
-			Data[projectile.type].Description =
-				$"Deals fire damage with a potency of {Data[projectile.type].Potency}.\n" +
+			Data[Projectile.type].Description =
+				$"Deals fire damage with a potency of {Data[Projectile.type].Potency}.\n" +
 				"Additional Effect: Grants [Astral Fire III] and removes [Umbral Ice]\n" +
 				$"Duration: {BlackMagePlayer.ElementalChargeSeconds}s";
 			base.SetStaticDefaults();
@@ -399,7 +399,7 @@ namespace BlackMage.Projectiles
 
 		public override void SetStaticDefaults()
 		{
-			Data[projectile.type] = new SpellData
+			Data[Projectile.type] = new SpellData
 			{
 				SpellName      = "Blizzaga",
 				Potency        = 260,
@@ -416,8 +416,8 @@ namespace BlackMage.Projectiles
 					blm.AddElementalStack(-BlackMagePlayer.MaxElementStacks, true);
 				},
 			};
-			Data[projectile.type].Description =
-				$"Deals ice damage with a potency of {Data[projectile.type].Potency}.\n" +
+			Data[Projectile.type].Description =
+				$"Deals ice damage with a potency of {Data[Projectile.type].Potency}.\n" +
 				"Additional Effect: Grants [Umbral Ice III] and removes [Astral Fire]\n" +
 				$"Duration: {BlackMagePlayer.ElementalChargeSeconds}s";
 			base.SetStaticDefaults();
@@ -430,7 +430,7 @@ namespace BlackMage.Projectiles
 
 		public override void SetStaticDefaults()
 		{
-			Data[projectile.type] = new SpellData
+			Data[Projectile.type] = new SpellData
 			{
 				SpellName      = "Freeze",
 				Potency        = 120,
@@ -447,8 +447,8 @@ namespace BlackMage.Projectiles
 					blm.UmbralHearts = BlackMagePlayer.MaxUmbralHearts;
 				},
 			};
-			Data[projectile.type].Description =
-				$"Deals ice damage with a potency of {Data[projectile.type].Potency} to target and all enemies nearby it.\n" +
+			Data[Projectile.type].Description =
+				$"Deals ice damage with a potency of {Data[Projectile.type].Potency} to target and all enemies nearby it.\n" +
 				$"Additional Effect: Grants {BlackMagePlayer.MaxUmbralHearts} [Umbral Hearts]\n" +
 				"[Umbral Heart] Bonus: Nullifies [Astral Fire]'s [MP] cost increase for [Fire] spells and reduces [MP] cost for [Flare] by one-third\n" +
 				"Can only be executed while under the effect of [Umbral Ice].";
@@ -462,7 +462,7 @@ namespace BlackMage.Projectiles
 
 		public override void SetStaticDefaults()
 		{
-			Data[projectile.type] = new SpellData
+			Data[Projectile.type] = new SpellData
 			{
 				SpellName      = "Flare",
 				Potency        = 280,
@@ -479,8 +479,8 @@ namespace BlackMage.Projectiles
 					blm.UmbralHearts = 0;
 				},
 			};
-			Data[projectile.type].Description =
-				$"Deals fire damage with a potency of {Data[projectile.type].Potency} to target and all enemies nearby it.\n" +
+			Data[Projectile.type].Description =
+				$"Deals fire damage with a potency of {Data[Projectile.type].Potency} to target and all enemies nearby it.\n" +
 				"Additional Effect: Grants [Astral Fire III]\n" +
 				$"Duration: {BlackMagePlayer.ElementalChargeSeconds}s\n" +
 				"Can only be executed while under the effect of [Astral Fire].";
@@ -494,7 +494,7 @@ namespace BlackMage.Projectiles
 
 		public override void SetStaticDefaults()
 		{
-			Data[projectile.type] = new SpellData
+			Data[Projectile.type] = new SpellData
 			{
 				SpellName      = "Blizzaja",
 				Potency        = 310,
@@ -511,8 +511,8 @@ namespace BlackMage.Projectiles
 					blm.UmbralHearts = BlackMagePlayer.MaxUmbralHearts;
 				},
 			};
-			Data[projectile.type].Description =
-				$"Deals ice damage with a potency of {Data[projectile.type].Potency}.\n" +
+			Data[Projectile.type].Description =
+				$"Deals ice damage with a potency of {Data[Projectile.type].Potency}.\n" +
 				$"Additional Effect: Grants {BlackMagePlayer.MaxUmbralHearts} [Umbral Hearts]\n" +
 				"[Umbral Heart] Bonus: Nullifies [Astral Fire]'s [MP] cost increase for [Fire] spells and reduces [MP] cost for [Flare] by one-third\n" +
 				"Can only be executed while under the effect of [Umbral Ice].";
@@ -526,7 +526,7 @@ namespace BlackMage.Projectiles
 
 		public override void SetStaticDefaults()
 		{
-			Data[projectile.type] = new SpellData
+			Data[Projectile.type] = new SpellData
 			{
 				SpellName      = "Firaja",
 				Potency        = 310,
@@ -542,8 +542,8 @@ namespace BlackMage.Projectiles
 					var blm = player.GetModPlayer<BlackMagePlayer>();
 				},
 			};
-			Data[projectile.type].Description =
-				$"Deals fire damage with a potency of {Data[projectile.type].Potency}.\n" +
+			Data[Projectile.type].Description =
+				$"Deals fire damage with a potency of {Data[Projectile.type].Potency}.\n" +
 				"Can only be executed while under the effect of [Astral Fire].";
 			base.SetStaticDefaults();
 		}
@@ -555,7 +555,7 @@ namespace BlackMage.Projectiles
 
 		public override void SetStaticDefaults()
 		{
-			Data[projectile.type] = new SpellData
+			Data[Projectile.type] = new SpellData
 			{
 				SpellName      = "Foul",
 				Potency        = 560,
@@ -567,8 +567,8 @@ namespace BlackMage.Projectiles
 				StackRequired  = false,
 				LevelLearned   = 70,
 			};
-			Data[projectile.type].Description =
-				$"Deals unaspected damage with a potency of {Data[projectile.type].Potency} to target and all enemies nearby it.\n" +
+			Data[Projectile.type].Description =
+				$"Deals unaspected damage with a potency of {Data[Projectile.type].Potency} to target and all enemies nearby it.\n" +
 				"[Polyglot] Cost: 1";
 			base.SetStaticDefaults();
 		}
@@ -580,7 +580,7 @@ namespace BlackMage.Projectiles
 
 		public override void SetStaticDefaults()
 		{
-			Data[projectile.type] = new SpellData
+			Data[Projectile.type] = new SpellData
 			{
 				SpellName      = "Despair",
 				Potency        = 340,
@@ -597,8 +597,8 @@ namespace BlackMage.Projectiles
 					blm.AddElementalStack(BlackMagePlayer.MaxElementStacks, false);
 				},
 			};
-			Data[projectile.type].Description =
-				$"Deals fire damage with a potency of {Data[projectile.type].Potency}.\n" +
+			Data[Projectile.type].Description =
+				$"Deals fire damage with a potency of {Data[Projectile.type].Potency}.\n" +
 				"Additional Effect: Grants [Astral Fire III]\n" +
 				$"Duration: {BlackMagePlayer.ElementalChargeSeconds}s\n" +
 				"Can only be executed while under the effect of [Astral Fire].";
@@ -612,7 +612,7 @@ namespace BlackMage.Projectiles
 
 		public override void SetStaticDefaults()
 		{
-			Data[projectile.type] = new SpellData
+			Data[Projectile.type] = new SpellData
 			{
 				SpellName      = "Umbral Soul",
 				Potency        = 0,
@@ -638,7 +638,7 @@ namespace BlackMage.Projectiles
 
 		public override void AI()
 		{
-			projectile.Kill();
+			Projectile.Kill();
 		}
 	}
 
@@ -648,7 +648,7 @@ namespace BlackMage.Projectiles
 
 		public override void SetStaticDefaults()
 		{
-			Data[projectile.type] = new SpellData
+			Data[Projectile.type] = new SpellData
 			{
 				SpellName      = "Xenoglossy",
 				Potency        = 760,
@@ -664,8 +664,8 @@ namespace BlackMage.Projectiles
 					var blm = player.GetModPlayer<BlackMagePlayer>();
 				},
 			};
-			Data[projectile.type].Description =
-				$"Deals unaspected damage with a potency of {Data[projectile.type].Potency}.\n" +
+			Data[Projectile.type].Description =
+				$"Deals unaspected damage with a potency of {Data[Projectile.type].Potency}.\n" +
 				"[Polyglot] Cost: 1";
 			base.SetStaticDefaults();
 		}
@@ -677,7 +677,7 @@ namespace BlackMage.Projectiles
 
 		public override void SetStaticDefaults()
 		{
-			Data[projectile.type] = new SpellData
+			Data[Projectile.type] = new SpellData
 			{
 				SpellName      = "Paradox",
 				Potency        = 500,
@@ -699,8 +699,8 @@ namespace BlackMage.Projectiles
 					player.AddBuff(ModContent.BuffType<Firestarter>(), 1800);
 				},
 			};
-			Data[projectile.type].Description =
-				$"Deals unaspected damage with a potency of {Data[projectile.type].Potency}.\n" +
+			Data[Projectile.type].Description =
+				$"Deals unaspected damage with a potency of {Data[Projectile.type].Potency}.\n" +
 				"[Astral Fire] Bonus: Refreshes the duration of [Astral Fire]\n" +
 				$"Duration: {BlackMagePlayer.ElementalChargeSeconds}s\n" +
 				"[Umbral Ice] Bonus: Spell is cast immediately, requires no [MP] to cast, and refreshes the duration of [Umbral Ice]\n" +

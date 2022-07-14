@@ -44,7 +44,7 @@ namespace BlackMage
 			base.Load();
 		}
 
-		public override void UpdateUI(GameTime gameTime)
+		public override void UpdateUI(GameTime gameTime)/* tModPorter Note: Removed. Use ModSystem.UpdateUI */
 		{
 			if (Main.dedServ)
 				return;
@@ -84,7 +84,7 @@ namespace BlackMage
 			_spellUI.Update(gameTime);
 		}
 
-		public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers)
+		public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers)/* tModPorter Note: Removed. Use ModSystem.ModifyInterfaceLayers */
 		{
 			int resourceBarIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Resource Bars"));
 			if (resourceBarIndex != -1)

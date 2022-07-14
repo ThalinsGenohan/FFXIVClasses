@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using BlackMage.Buffs;
 using BlackMage.Projectiles;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -108,6 +107,7 @@ namespace BlackMage
 			set => _paradoxReady = value && CanUseParadox;
 		}
 
+		public bool Firestarter   { get; set; }
 
 		public int? CurrentSpell { get; set; } = null;
 

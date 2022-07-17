@@ -3,195 +3,194 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Utilities;
 
-namespace BlackMage.Items.Accessories.Crystals
+namespace BlackMage.Items.Accessories.Crystals;
+
+public abstract class BaseCrystal : ModItem
 {
-	public abstract class BaseCrystal : ModItem
+	public const string BaseDisplayName = "Level {0} Soul of the Black Mage";
+
+	public const string BaseTooltip =
+		"'Upon the surface of this multi-aspected crystal are carved the myriad deeds of black mages from eras past.'";
+
+	public const           int Width  = 20;
+	public const           int Height = 20;
+	public const           int Rarity = ItemRarityID.Purple;
+	public static readonly int Value  = Item.sellPrice(gold: 10);
+
+	protected virtual int    Level          => 0;
+	protected virtual string UnlocksTooltip => "";
+
+	public override void SetStaticDefaults()
 	{
-		public const string BaseDisplayName = "Level {0} Soul of the Black Mage";
-
-		public const string BaseTooltip =
-			"'Upon the surface of this multi-aspected crystal are carved the myriad deeds of black mages from eras past.'";
-
-		public const           int Width  = 20;
-		public const           int Height = 20;
-		public const           int Rarity = ItemRarityID.Purple;
-		public static readonly int Value  = Item.sellPrice(gold: 10);
-
-		protected virtual int    Level          => 0;
-		protected virtual string UnlocksTooltip => "";
-
-		public override void SetStaticDefaults()
-		{
-			DisplayName.SetDefault(string.Format(BaseDisplayName, Level));
-			Tooltip.SetDefault(Constants.ReplaceKeywords(UnlocksTooltip) + "\n \n" + BaseTooltip);
-		}
-
-		public override void SetDefaults()
-		{
-			Item.width     = Width;
-			Item.height    = Height;
-			Item.accessory = true;
-			Item.value     = Value;
-			Item.rare      = Rarity;
-		}
-
-		public override void UpdateAccessory(Player player, bool hideVisual)
-		{
-			player.GetModPlayer<BlackMagePlayer>().SoulCrystalLevel = Level;
-		}
-
-		public override int ChoosePrefix(UnifiedRandom rand) => 0;
+		DisplayName.SetDefault(string.Format(BaseDisplayName, Level));
+		Tooltip.SetDefault(Constants.ReplaceKeywords(UnlocksTooltip) + "\n \n" + BaseTooltip);
 	}
 
-	internal class BLMCrystalLv10 : BaseCrystal
+	public override void SetDefaults()
 	{
-		protected override int Level => 10;
-
-		protected override string UnlocksTooltip =>
-			"Allows you to cast [Fire], [Blizzard], and [Transpose].\n" +
-			"Unlocks [MP] and the [Elemental Gauge].\n" +
-			$"[MP] is used for Black Mage spells, and regenerates at a rate of {BlackMagePlayer.MPRegenRate[3]} [MP] every {BlackMagePlayer.MPTickSeconds} seconds, up to a max of {BlackMagePlayer.MaxMP}.\n" +
-			"Upon selecting a spell, the spell's cast time must be completed before the spell will cast. Moving does not interrupt casting times.\n" +
-			$"[Astral Fire] grants a {BlackMagePlayer.FireDamageMultList[4]}x damage increase to [Fire] spells, but a {BlackMagePlayer.FireMPMultList[4]}x [MP] cost, and halts [MP] regeneration.\n" +
-			$"[Umbral Ice] increases [MP] regeneration to {BlackMagePlayer.MPRegenRate[2]} every {BlackMagePlayer.MPTickSeconds} seconds, and lowers the [MP] cost of [Ice] spells to {BlackMagePlayer.IceMPMultList[2]}x.\n" +
-			"While under the effect of [Astral Fire] or [Umbral Ice], casting a spell of the opposite element will consume no [MP].\n" +
-			"[Transpose] swaps [Astral Fire] with a single [Umbral Ice], or [Umbral Ice] with a single [Astral Fire].";
+		Item.width     = Width;
+		Item.height    = Height;
+		Item.accessory = true;
+		Item.value     = Value;
+		Item.rare      = Rarity;
 	}
 
-	internal class BLMCrystalLv20 : BaseCrystal
+	public override void UpdateAccessory(Player player, bool hideVisual)
 	{
-		protected override int Level => 20;
-
-		protected override string UnlocksTooltip =>
-			"Allows you to cast [Fira] and [Blizzara].\n" +
-			$"Allows the stacking of a second [Astral Fire] ({BlackMagePlayer.FireDamageMultList[5]}x damage) and [Umbral Ice] ({BlackMagePlayer.MPRegenRate[1]} [MP]/{BlackMagePlayer.MPTickSeconds} sec, {BlackMagePlayer.IceMPMultList[1]}x cost).";
-
-		public override void AddRecipes()
-		{
-			var recipe = CreateRecipe();
-			recipe.AddIngredient(ModContent.ItemType<BLMCrystalLv10>());
-			recipe.AddIngredient(ItemID.Meteorite);
-			recipe.Register();
-		}
+		player.GetModPlayer<BlackMagePlayer>().SoulCrystalLevel = Level;
 	}
 
-	internal class BLMCrystalLv35 : BaseCrystal
+	public override int ChoosePrefix(UnifiedRandom rand) => 0;
+}
+
+internal class BLMCrystalLv10 : BaseCrystal
+{
+	protected override int Level => 10;
+
+	protected override string UnlocksTooltip =>
+		"Allows you to cast [Fire], [Blizzard], and [Transpose].\n" +
+		"Unlocks [MP] and the [Elemental Gauge].\n" +
+		$"[MP] is used for Black Mage spells, and regenerates at a rate of {BlackMagePlayer.MPRegenRate[3]} [MP] every {BlackMagePlayer.MPTickSeconds} seconds, up to a max of {BlackMagePlayer.MaxMP}.\n" +
+		"Upon selecting a spell, the spell's cast time must be completed before the spell will cast. Moving does not interrupt casting times.\n" +
+		$"[Astral Fire] grants a {BlackMagePlayer.FireDamageMultList[4]}x damage increase to [Fire] spells, but a {BlackMagePlayer.FireMPMultList[4]}x [MP] cost, and halts [MP] regeneration.\n" +
+		$"[Umbral Ice] increases [MP] regeneration to {BlackMagePlayer.MPRegenRate[2]} every {BlackMagePlayer.MPTickSeconds} seconds, and lowers the [MP] cost of [Ice] spells to {BlackMagePlayer.IceMPMultList[2]}x.\n" +
+		"While under the effect of [Astral Fire] or [Umbral Ice], casting a spell of the opposite element will consume no [MP].\n" +
+		"[Transpose] swaps [Astral Fire] with a single [Umbral Ice], or [Umbral Ice] with a single [Astral Fire].";
+}
+
+internal class BLMCrystalLv20 : BaseCrystal
+{
+	protected override int Level => 20;
+
+	protected override string UnlocksTooltip =>
+		"Allows you to cast [Fira] and [Blizzara].\n" +
+		$"Allows the stacking of a second [Astral Fire] ({BlackMagePlayer.FireDamageMultList[5]}x damage) and [Umbral Ice] ({BlackMagePlayer.MPRegenRate[1]} [MP]/{BlackMagePlayer.MPTickSeconds} sec, {BlackMagePlayer.IceMPMultList[1]}x cost).";
+
+	public override void AddRecipes()
 	{
-		protected override int Level => 35;
-
-		protected override string UnlocksTooltip =>
-			"Allows you to cast [Firaga] and [Blizzaga].\n" +
-			$"Allows the stacking of a third [Astral Fire] ({BlackMagePlayer.FireDamageMultList[6]}x damage) and [Umbral Ice] ({BlackMagePlayer.MPRegenRate[0]} [MP]/{BlackMagePlayer.MPTickSeconds} sec, {BlackMagePlayer.IceMPMultList[0]}x cost).";
-
-		public override void AddRecipes()
-		{
-			var recipe = CreateRecipe();
-			recipe.AddIngredient(ModContent.ItemType<BLMCrystalLv20>());
-			recipe.AddIngredient(ItemID.Hellstone);
-			recipe.Register();
-		}
+		CreateRecipe()
+			.AddIngredient(ModContent.ItemType<BLMCrystalLv10>())
+			.AddIngredient(ItemID.Meteorite)
+			.Register();
 	}
+}
 
-	internal class BLMCrystalLv50 : BaseCrystal
+internal class BLMCrystalLv35 : BaseCrystal
+{
+	protected override int Level => 35;
+
+	protected override string UnlocksTooltip =>
+		"Allows you to cast [Firaga] and [Blizzaga].\n" +
+		$"Allows the stacking of a third [Astral Fire] ({BlackMagePlayer.FireDamageMultList[6]}x damage) and [Umbral Ice] ({BlackMagePlayer.MPRegenRate[0]} [MP]/{BlackMagePlayer.MPTickSeconds} sec, {BlackMagePlayer.IceMPMultList[0]}x cost).";
+
+	public override void AddRecipes()
 	{
-		protected override int Level => 50;
-
-		protected override string UnlocksTooltip =>
-			"Allows you to cast [Flare] and [Freeze].\n" +
-			"Casting [Fire] has a 40% chance to make your next [Firaga] cost no [MP] and have no cast time.";
-
-		public override void AddRecipes()
-		{
-			var recipe = CreateRecipe();
-			recipe.AddIngredient(ModContent.ItemType<BLMCrystalLv35>());
-			recipe.AddIngredient(ItemID.SoulofNight);
-			recipe.Register();
-		}
+		CreateRecipe()
+			.AddIngredient(ModContent.ItemType<BLMCrystalLv20>())
+			.AddIngredient(ItemID.Hellstone)
+			.Register();
 	}
+}
 
-	internal class BLMCrystalLv60 : BaseCrystal
+internal class BLMCrystalLv50 : BaseCrystal
+{
+	protected override int Level => 50;
+
+	protected override string UnlocksTooltip =>
+		"Allows you to cast [Flare] and [Freeze].\n" +
+		"Casting [Fire] has a 40% chance to make your next [Firaga] cost no [MP] and have no cast time.";
+
+	public override void AddRecipes()
 	{
-		protected override int Level => 60;
-
-		protected override string UnlocksTooltip =>
-			"Allows you to cast [Firaja] and [Blizzaja].\n" +
-			"[Umbral Hearts] nullify [Astral Fire]'s [MP] cost increase, and lower the [MP] cost for [Flare] by 1/3.\n" +
-			$"Casting [Blizzaja] or [Freeze] grants {BlackMagePlayer.MaxUmbralHearts} [Umbral Hearts].";
-
-		public override void AddRecipes()
-		{
-			var recipe = CreateRecipe();
-			recipe.AddIngredient(ModContent.ItemType<BLMCrystalLv50>());
-			recipe.AddIngredient(ItemID.SoulofMight);
-			recipe.Register();
-		}
+		CreateRecipe()
+			.AddIngredient(ModContent.ItemType<BLMCrystalLv35>())
+			.AddIngredient(ItemID.SoulofNight)
+			.Register();
 	}
+}
 
-	internal class BLMCrystalLv70 : BaseCrystal
+internal class BLMCrystalLv60 : BaseCrystal
+{
+	protected override int Level => 60;
+
+	protected override string UnlocksTooltip =>
+		"Allows you to cast [Firaja] and [Blizzaja].\n" +
+		"[Umbral Hearts] nullify [Astral Fire]'s [MP] cost increase, and lower the [MP] cost for [Flare] by 1/3.\n" +
+		$"Casting [Blizzaja] or [Freeze] grants {BlackMagePlayer.MaxUmbralHearts} [Umbral Hearts].";
+
+	public override void AddRecipes()
 	{
-		protected override int Level => 70;
-
-		protected override string UnlocksTooltip =>
-			"Allows you to cast [Foul].\n" +
-			$"Grants [Polyglot] every {BlackMagePlayer.PolyglotChargeSeconds} seconds [Astral Fire] or [Umbral Ice] is active, allowing for [Foul] to be cast.";
-
-		public override void AddRecipes()
-		{
-			var recipe = CreateRecipe();
-			recipe.AddIngredient(ModContent.ItemType<BLMCrystalLv60>());
-			recipe.AddIngredient(ItemID.Ectoplasm);
-			recipe.Register();
-		}
+		CreateRecipe()
+			.AddIngredient(ModContent.ItemType<BLMCrystalLv50>())
+			.AddIngredient(ItemID.SoulofMight)
+			.Register();
 	}
+}
 
-	internal class BLMCrystalLv75 : BaseCrystal
+internal class BLMCrystalLv70 : BaseCrystal
+{
+	protected override int Level => 70;
+
+	protected override string UnlocksTooltip =>
+		"Allows you to cast [Foul].\n" +
+		$"Grants [Polyglot] every {BlackMagePlayer.PolyglotChargeSeconds} seconds [Astral Fire] or [Umbral Ice] is active, allowing for [Foul] to be cast.";
+
+	public override void AddRecipes()
 	{
-		protected override int Level => 75;
-
-		protected override string UnlocksTooltip =>
-			"Allows you to cast [Despair].";
-
-		public override void AddRecipes()
-		{
-			var recipe = CreateRecipe();
-			recipe.AddIngredient(ModContent.ItemType<BLMCrystalLv70>());
-			recipe.AddIngredient(ItemID.BeetleHusk);
-			recipe.Register();
-		}
+		CreateRecipe()
+			.AddIngredient(ModContent.ItemType<BLMCrystalLv60>())
+			.AddIngredient(ItemID.Ectoplasm)
+			.Register();
 	}
+}
 
-	internal class BLMCrystalLv80 : BaseCrystal
+internal class BLMCrystalLv75 : BaseCrystal
+{
+	protected override int Level => 75;
+
+	protected override string UnlocksTooltip =>
+		"Allows you to cast [Despair].";
+
+	public override void AddRecipes()
 	{
-		protected override int Level => 80;
-
-		protected override string UnlocksTooltip =>
-			"Allows you to cast [Umbral Soul] and [Xenoglossy].\n" +
-			"[Umbral Soul] grants 1 stack of [Umbral Ice] and 1 [Umbral Heart]\n" +
-			"Allows the stacking of a second [Polyglot].";
-
-		public override void AddRecipes()
-		{
-			var recipe = CreateRecipe();
-			recipe.AddIngredient(ModContent.ItemType<BLMCrystalLv75>());
-			recipe.AddTile(TileID.LunarCraftingStation);
-			recipe.Register();
-		}
+		CreateRecipe()
+			.AddIngredient(ModContent.ItemType<BLMCrystalLv70>())
+			.AddIngredient(ItemID.BeetleHusk)
+			.Register();
 	}
+}
 
-	internal class BLMCrystalLv90 : BaseCrystal
+internal class BLMCrystalLv80 : BaseCrystal
+{
+	protected override int Level => 80;
+
+	protected override string UnlocksTooltip =>
+		"Allows you to cast [Umbral Soul] and [Xenoglossy].\n" +
+		"[Umbral Soul] grants 1 stack of [Umbral Ice] and 1 [Umbral Heart]\n" +
+		"Allows the stacking of a second [Polyglot].";
+
+	public override void AddRecipes()
 	{
-		protected override int Level => 90;
+		CreateRecipe()
+			.AddIngredient(ModContent.ItemType<BLMCrystalLv75>())
+			.AddTile(TileID.LunarCraftingStation)
+			.Register();
+	}
+}
 
-		protected override string UnlocksTooltip =>
-			"Allows you to cast [Paradox].\n" +
-			"[Paradox] replaces [Fire] and [Blizzard] upon switching from [Astral Fire] 3 to [Umbral Ice], or from [Umbral Ice] 3 with 3 [Umbral Hearts] to [Astral Fire].";
+internal class BLMCrystalLv90 : BaseCrystal
+{
+	protected override int Level => 90;
 
-		public override void AddRecipes()
-		{
-			var recipe = CreateRecipe();
-			recipe.AddIngredient(ModContent.ItemType<BLMCrystalLv80>());
-			recipe.AddIngredient(ItemID.FragmentNebula);
-			recipe.Register();
-		}
+	protected override string UnlocksTooltip =>
+		"Allows you to cast [Paradox].\n" +
+		"[Paradox] replaces [Fire] and [Blizzard] upon switching from [Astral Fire] 3 to [Umbral Ice], or from [Umbral Ice] 3 with 3 [Umbral Hearts] to [Astral Fire].";
+
+	public override void AddRecipes()
+	{
+		CreateRecipe()
+			.AddIngredient(ModContent.ItemType<BLMCrystalLv80>())
+			.AddIngredient(ItemID.FragmentNebula)
+			.Register();
 	}
 }

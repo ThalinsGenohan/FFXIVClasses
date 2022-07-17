@@ -190,25 +190,20 @@ internal class BlackMagePlayer : ModPlayer
 	public int GetSpellCost(int spellId)
 	{
 		Spell.SpellData spellData = Spell.Data[spellId];
-		switch (spellData.Element)
+		return spellData.Element switch
 		{
-			case Constants.Elements.FireElement when spellData.MPCost == -1 && UmbralHearts > 0:
-				return Math.Max((int)(MP / 1.5f), 800);
-			case Constants.Elements.FireElement when spellData.MPCost == -1:
-				return Math.Max(MP, 800);
-			case Constants.Elements.FireElement:
-				return (int)(spellData.MPCost * FireMPMult);
-			case Constants.Elements.IceElement:
-				return (int)(spellData.MPCost * IceMPMult);
-			case Constants.Elements.ParadoxElement when UmbralIce > 0:
-				return 0;
-
-			case Constants.Elements.NoElement:
-			case Constants.Elements.PolyglotElement:
-			case Constants.Elements.TransposeElement:
-			default:
-				return spellData.MPCost;
-		}
+			Constants.Elements.FireElement when spellData.MPCost == -1 && UmbralHearts > 0 => Math.Max(
+				(int)(MP / 1.5f),
+				800),
+			Constants.Elements.FireElement when spellData.MPCost == -1 => Math.Max(MP, 800),
+			Constants.Elements.FireElement                             => (int)(spellData.MPCost * FireMPMult),
+			Constants.Elements.IceElement                              => (int)(spellData.MPCost * IceMPMult),
+			Constants.Elements.ParadoxElement when UmbralIce > 0       => 0,
+			Constants.Elements.NoElement                               => spellData.MPCost,
+			Constants.Elements.PolyglotElement                         => spellData.MPCost,
+			Constants.Elements.TransposeElement                        => spellData.MPCost,
+			_                                                          => spellData.MPCost
+		};
 	}
 
 	public bool CanCastSpell(int spellId)
@@ -330,12 +325,11 @@ internal class BlackMagePlayer : ModPlayer
 		if (!CanCastSpell(spellId))
 			return false;
 
-		Spell.SpellData spellData = Spell.Data[spellId];
-
 		int damage = Spell.Data[spellId].Potency;
 
 		MP -= GetSpellCost(spellId);
 
+		Spell.SpellData spellData = Spell.Data[spellId];
 		switch (spellData.Element)
 		{
 			case Constants.Elements.FireElement:

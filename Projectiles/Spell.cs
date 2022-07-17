@@ -306,6 +306,10 @@ internal class Scathe : Spell
 			Element        = Constants.Elements.NoElement,
 			StackRequired  = false,
 			LevelLearned   = 0,
+			OnCastEffect = player =>
+			{
+				var blm = player.GetModPlayer<BlackMagePlayer>();
+			},
 		};
 		Data[Projectile.type].Description =
 			$"Deals unaspected damage with a potency of {Data[Projectile.type].Potency}.\n" +
@@ -562,6 +566,10 @@ internal class Foul : Spell
 			Element        = Constants.Elements.PolyglotElement,
 			StackRequired  = false,
 			LevelLearned   = 70,
+			OnCastEffect = player =>
+			{
+				var blm = player.GetModPlayer<BlackMagePlayer>();
+			},
 		};
 		Data[Projectile.type].Description =
 			$"Deals unaspected damage with a potency of {Data[Projectile.type].Potency} to target and all enemies nearby it.\n" +

@@ -320,7 +320,7 @@ internal class BlackMagePlayer : ModPlayer
 		switch (spellData.Element)
 		{
 			case Constants.Elements.FireElement:
-				if (AstralFire > 0 && UmbralHearts > 0)
+				if (AstralFire > 0 && UmbralHearts > 0 && spellData.MPCost > 0)
 					UmbralHearts--;
 				damage = (int)(damage * FireDamageMult);
 				break;

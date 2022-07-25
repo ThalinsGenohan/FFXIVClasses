@@ -18,10 +18,11 @@ internal class MPBar : UIState
 	public override void OnInitialize()
 	{
 		_area = new UIElement();
-		_area.Left.Set(-_area.Width.Pixels - 600f, 1f);
-		_area.Top.Set(30f, 0f);
+		_area.Left.Set(0f, 0f);
+		_area.Top.Set(0f, 0.75f);
 		_area.Width.Set(200f, 0f);
 		_area.Height.Set(60f, 0f);
+		_area.HAlign = 0.5f;
 
 		_barFrame = new UIImage(ModContent.Request<Texture2D>("BlackMage/UI/MPBarFrame"));
 		_barFrame.Left.Set(0f, 0f);

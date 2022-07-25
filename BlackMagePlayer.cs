@@ -299,6 +299,9 @@ internal class BlackMagePlayer : ModPlayer
 		    (spellData.Element == Constants.Elements.IceElement && AstralFire == MaxElementStacks))
 			MaxCastTimer /= 2;
 
+		if (spellData.Element == Constants.Elements.ParadoxElement && UmbralIce > 0)
+			MaxCastTimer = 0;
+
 		CastTimer = MaxCastTimer;
 		if (Spell.Data[spellId].GlobalCooldown)
 			GlobalCooldownTimer = GlobalCooldownMaxTime;

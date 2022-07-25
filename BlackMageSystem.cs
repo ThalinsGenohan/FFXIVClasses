@@ -14,11 +14,13 @@ public class BlackMageSystem : ModSystem
 	internal SimpleElementalGauge SimpleElementalGauge { get; private set; }
 	internal FancyElementalGauge  FancyElementalGauge  { get; private set; }
 	internal SpellUI              SpellUI              { get; private set; }
+	internal TargetUI             TargetUI             { get; private set; }
 
 	private UserInterface _mpBarUI;
 	private UserInterface _castbarUI;
 	private UserInterface _elementalGaugeUI;
 	private UserInterface _spellUI;
+	private UserInterface _targetUI;
 
 	public override void Load()
 	{
@@ -40,6 +42,10 @@ public class BlackMageSystem : ModSystem
 			SpellUI  = new SpellUI();
 			_spellUI = new UserInterface();
 			_spellUI.SetState(SpellUI);
+
+			TargetUI  = new TargetUI();
+			_targetUI = new UserInterface();
+			_targetUI.SetState(TargetUI);
 		}
 
 		base.Load();
@@ -63,6 +69,8 @@ public class BlackMageSystem : ModSystem
 				_elementalGaugeUI.SetState(null);
 			if (_spellUI.CurrentState != null)
 				_spellUI.SetState(null);
+			if (_targetUI.CurrentState != null)
+				_targetUI.SetState(null);
 		}
 		else
 		{
@@ -74,6 +82,8 @@ public class BlackMageSystem : ModSystem
 				_elementalGaugeUI.SetState(SimpleElementalGauge);
 			if (_spellUI.CurrentState == null)
 				_spellUI.SetState(SpellUI);
+			if (_targetUI.CurrentState == null)
+				_targetUI.SetState(TargetUI);
 
 			if (SpellUI.ButtonCount == 0)
 				SpellUI.RefreshSpells();
@@ -83,6 +93,7 @@ public class BlackMageSystem : ModSystem
 		_castbarUI.Update(gameTime);
 		_elementalGaugeUI.Update(gameTime);
 		_spellUI.Update(gameTime);
+		_targetUI.Update(gameTime);
 	}
 
 	public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers)
@@ -120,6 +131,16 @@ public class BlackMageSystem : ModSystem
 				              },
 				              InterfaceScaleType.UI
 			              )
+			);
+			layers.Insert(resourceBarIndex,
+			              new LegacyGameInterfaceLayer(
+				              "BlackMage: Target UI",
+				              delegate
+				              {
+					              _targetUI.Draw(Main.spriteBatch, new GameTime());
+					              return true;
+				              },
+				              InterfaceScaleType.UI)
 			);
 		}
 

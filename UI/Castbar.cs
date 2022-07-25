@@ -53,7 +53,7 @@ internal class Castbar : UIState
 
 	public override void Draw(SpriteBatch spriteBatch)
 	{
-		if (Main.LocalPlayer.GetModPlayer<BlackMagePlayer>().CurrentSpell == null)
+		if (Main.LocalPlayer.GetModPlayer<BlackMagePlayer>().CurrentSpell == "")
 			return;
 
 		base.Draw(spriteBatch);
@@ -63,13 +63,13 @@ internal class Castbar : UIState
 	{
 		var blm = Main.LocalPlayer.GetModPlayer<BlackMagePlayer>();
 
-		if (blm.CurrentSpell == null)
+		if (blm.CurrentSpell == "")
 			return;
 
 		_countdownText.SetText($"{Math.Round(blm.CastTimer / 60f, 2),5:F2}");
-		_spellText.SetText(Spell.Data[blm.CurrentSpell.Value].SpellName);
+		_spellText.SetText(Spell.Data[blm.CurrentSpell].SpellName);
 		_spellIcon.SetImage(
-			ModContent.Request<Texture2D>($"BlackMage/UI/Spells/{Spell.Data[blm.CurrentSpell.Value].SpellName}"));
+			ModContent.Request<Texture2D>($"BlackMage/UI/Spells/{Spell.Data[blm.CurrentSpell].SpellName}"));
 		base.Update(gameTime);
 	}
 
@@ -79,7 +79,7 @@ internal class Castbar : UIState
 
 		var blm = Main.LocalPlayer.GetModPlayer<BlackMagePlayer>();
 
-		if (blm.CurrentSpell == null)
+		if (blm.CurrentSpell == "")
 			return;
 
 		CalculatedStyle hitbox = _barFrame.GetInnerDimensions();

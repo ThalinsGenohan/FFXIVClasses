@@ -19,11 +19,11 @@ internal class SpellUI : UIState
 	private const float Padding  = 2f;
 	public        int   ButtonCount => _buttons.Count;
 
-	private readonly Dictionary<int, SpellButton> _buttons = new();
-	private          UIElement                    _area;
-	private          int                          _lastCrystalLevel = 0;
+	private readonly Dictionary<string, SpellButton> _buttons = new();
+	private          UIElement                       _area;
+	private          int                             _lastCrystalLevel = 0;
 
-	private static void CastSpell(int spellId)
+	private static void CastSpell(string spellId)
 	{
 		Main.LocalPlayer.GetModPlayer<BlackMagePlayer>().BeginSpellCast(spellId);
 	}
@@ -51,7 +51,7 @@ internal class SpellUI : UIState
 			RefreshSpells();
 		}
 
-		foreach ((int spellId, SpellButton button) in _buttons)
+		foreach ((string spellId, SpellButton button) in _buttons)
 		{
 			Spell.SpellData spellData = Spell.Data[spellId];
 
@@ -75,7 +75,7 @@ internal class SpellUI : UIState
 	public void RefreshSpells()
 	{
 		var i = 0;
-		foreach ((int spellId, Spell.SpellData spellData) in Spell.Data)
+		foreach ((string spellId, Spell.SpellData spellData) in Spell.Data)
 		{
 			if (spellData.SpellName == "Scathe")
 				continue;
@@ -125,10 +125,10 @@ internal class SpellUI : UIState
 		private static   BlackMagePlayer BLM          => Main.LocalPlayer.GetModPlayer<BlackMagePlayer>();
 		public           UIText          ManaText     { get; set; }
 		public           UIText          CooldownText { get; set; }
-		private readonly int?            _spellId;
-		private          Spell.SpellData SpellData => _spellId == null ? null : Spell.Data[_spellId.Value];
+		private readonly string          _spellId;
+		private          Spell.SpellData SpellData => _spellId == "" ? null : Spell.Data[_spellId];
 
-		public SpellButton(int spellId, Asset<Texture2D> texture) : base(texture)
+		public SpellButton(string spellId, Asset<Texture2D> texture) : base(texture)
 		{
 			_spellId = spellId;
 
@@ -142,7 +142,7 @@ internal class SpellUI : UIState
 
 		protected override void DrawSelf(SpriteBatch spriteBatch)
 		{
-			if (_spellId == -1)
+			if (_spellId == "")
 				return;
 
 			base.DrawSelf(spriteBatch);
@@ -172,27 +172,27 @@ internal class SpellUI : UIState
 				}
 			}
 
-			if (_spellId != null && !BLM.SpellCooldowns.ContainsKey(_spellId.Value))
-				BLM.SpellCooldowns.Add(_spellId.Value, 0);
-			if (_spellId != null && (BLM.SpellCooldowns[_spellId.Value] > 0 ||
+			if (_spellId != "" && !BLM.SpellCooldowns.ContainsKey(_spellId))
+				BLM.SpellCooldowns.Add(_spellId, 0);
+			if (_spellId != "" && (BLM.SpellCooldowns[_spellId] > 0 ||
 			                         (SpellData.GlobalCooldown && BLM.GlobalCooldownTimer > 0)))
 			{
-				if (BLM.MP >= BLM.GetSpellCost(_spellId.Value))
+				if (BLM.MP >= BLM.GetSpellCost(_spellId))
 					ManaText.TextColor *= 0.6f;
 				DrawCooldown(spriteBatch);
 			}
-			else if (_spellId != null && (!BLM.CanCastSpell(_spellId.Value) ||
+			else if (_spellId != "" && (!BLM.CanCastSpell(_spellId) ||
 			                              (BLM.GlobalCooldownTimer > 0 && SpellData.GlobalCooldown) ||
-			                              BLM.SpellCooldowns[_spellId.Value] > 0))
+			                              BLM.SpellCooldowns[_spellId] > 0))
 			{
-				if (BLM.MP >= BLM.GetSpellCost(_spellId.Value))
+				if (BLM.MP >= BLM.GetSpellCost(_spellId))
 					ManaText.TextColor *= 0.6f;
 				spriteBatch.Draw(TextureAssets.MagicPixel.Value,
 				                 new Rectangle(left, top, size, size),
 				                 new Color(0f, 0f, 0f, 0.5f));
 			}
 
-			if (_spellId != null && BLM.SpellCooldowns[_spellId.Value] == 0 &&
+			if (_spellId != "" && BLM.SpellCooldowns[_spellId] == 0 &&
 			    !(SpellData.GlobalCooldown && BLM.GlobalCooldownTimer > 0))
 				CooldownText.SetText("");
 		}
@@ -208,15 +208,15 @@ internal class SpellUI : UIState
 			var   center = new Vector2(left + size / 2f, top + size / 2f);
 			float radius = size / 2f;
 
-			uint currentTimer = _spellId != null && BLM.SpellCooldowns[_spellId.Value] > 0
-				                    ? BLM.SpellCooldowns[_spellId.Value]
+			uint currentTimer = _spellId != "" && BLM.SpellCooldowns[_spellId] > 0
+				                    ? BLM.SpellCooldowns[_spellId]
 				                    : SpellData.GlobalCooldown
 					                    ? BLM.GlobalCooldownTimer
 					                    : 0;
 
 			CooldownText.SetText(Math.Ceiling(currentTimer / 60f).ToString(CultureInfo.CurrentCulture), 0.8f, false);
 
-			uint maxTimer = _spellId != null && BLM.SpellCooldowns[_spellId.Value] > 0
+			uint maxTimer = _spellId != "" && BLM.SpellCooldowns[_spellId] > 0
 				                ? SpellData.Cooldown
 				                : SpellData.GlobalCooldown
 					                ? BlackMagePlayer.GlobalCooldownMaxTime

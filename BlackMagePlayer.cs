@@ -32,7 +32,7 @@ internal class BlackMagePlayer : ModPlayer
 	public static float[] FireDamageMultList { get; } = { 0.7f, 0.8f, 0.9f, 1f, 1.4f, 1.6f, 1.8f };
 	public static float[] IceDamageMultList  { get; } = { 1f, 1f, 1f, 1f, 0.9f, 0.8f, 0.7f };
 
-	public Dictionary<int, uint> SpellCooldowns { get; } = new();
+	public Dictionary<string, uint> SpellCooldowns { get; } = new();
 
 	public float FireMPMult =>
 		FireMPMultList[(UmbralHearts > 0 && AstralFire > 0 ? 0 : ElementalCharge) + MaxElementStacks];
@@ -118,7 +118,7 @@ internal class BlackMagePlayer : ModPlayer
 
 	public bool Firestarter { get; set; }
 
-	public int? CurrentSpell { get; set; } = null;
+	public string CurrentSpell { get; set; } = "";
 
 	public uint CastTimer            { get; set; } = 0;
 	public uint MaxCastTimer         { get; set; } = 0;
@@ -141,13 +141,13 @@ internal class BlackMagePlayer : ModPlayer
 		if (CastTimer > 0)
 			CastTimer--;
 
-		if (CastTimer == 0 && CurrentSpell != null)
+		if (CastTimer == 0 && CurrentSpell != "")
 		{
-			CastSpell(CurrentSpell.Value);
-			CurrentSpell = null;
+			CastSpell(CurrentSpell);
+			CurrentSpell = "";
 		}
 
-		foreach (int spellId in from spellDataPair in Spell.Data
+		foreach (string spellId in from spellDataPair in Spell.Data
 		                        let spellId = spellDataPair.Key
 		                        let spellData = spellDataPair.Value
 		                        where spellData.Cooldown > 0
@@ -186,9 +186,9 @@ internal class BlackMagePlayer : ModPlayer
 		SoulCrystalLevel = 0;
 	}
 
-	public bool IsSpellLearned(int spellId) => SoulCrystalLevel >= Spell.Data[spellId].LevelLearned;
+	public bool IsSpellLearned(string spellId) => SoulCrystalLevel >= Spell.Data[spellId].LevelLearned;
 
-	public int GetSpellCost(int spellId)
+	public int GetSpellCost(string spellId)
 	{
 		Spell.SpellData spellData = Spell.Data[spellId];
 
@@ -209,7 +209,7 @@ internal class BlackMagePlayer : ModPlayer
 		};
 	}
 
-	public bool CanCastSpell(int spellId)
+	public bool CanCastSpell(string spellId)
 	{
 		if (!Player.HasMinionAttackTargetNPC)
 			return false;
@@ -284,7 +284,7 @@ internal class BlackMagePlayer : ModPlayer
 		PolyglotTimer        = PolyglotMaxTime;
 	}
 
-	public void BeginSpellCast(int spellId)
+	public void BeginSpellCast(string spellId)
 	{
 		if (!CanCastSpell(spellId) || (GlobalCooldownTimer > 0 && Spell.Data[spellId].GlobalCooldown) ||
 		    SpellCooldowns[spellId] > 0)
@@ -304,7 +304,7 @@ internal class BlackMagePlayer : ModPlayer
 			GlobalCooldownTimer = GlobalCooldownMaxTime;
 	}
 
-	public bool CastSpell(int spellId)
+	public bool CastSpell(string spellId)
 	{
 		if (!CanCastSpell(spellId))
 			return false;
@@ -344,7 +344,7 @@ internal class BlackMagePlayer : ModPlayer
 			Projectile.NewProjectile(Player.GetSource_Misc("spell"),
 			                         Player.position,
 			                         Vector2.Zero,
-			                         spellId,
+			                         spellData.ProjectileID,
 			                         damage,
 			                         0f,
 			                         Player.whoAmI);

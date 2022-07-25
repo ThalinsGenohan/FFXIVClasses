@@ -124,7 +124,7 @@ internal class Blizzard : Spell
 			OnCastEffect = player =>
 			{
 				var blm = player.GetModPlayer<BlackMagePlayer>();
-				blm.AddElementalStack(-1, false);
+				blm.AddElementalStack(-1);
 			},
 		};
 		Data[Projectile.type].Description =
@@ -155,7 +155,7 @@ internal class Fire : Spell
 			OnCastEffect = player =>
 			{
 				var blm = player.GetModPlayer<BlackMagePlayer>();
-				blm.AddElementalStack(1, false);
+				blm.AddElementalStack(1);
 
 				if (blm.SoulCrystalLevel < 42 || Main.rand.Next(0, 9) >= 4)
 					return;
@@ -246,7 +246,11 @@ internal class Transpose : Spell
 			OnCastEffect = player =>
 			{
 				var blm = player.GetModPlayer<BlackMagePlayer>();
-				blm.AddElementalStack(0, true);
+				
+				if (blm.AstralFire > 0)
+					blm.SetElementalStack(-1);
+				if (blm.UmbralIce > 0)
+					blm.SetElementalStack(1);
 			},
 		};
 		base.SetStaticDefaults();
@@ -278,7 +282,7 @@ internal class Blizzard2 : Spell
 			OnCastEffect = player =>
 			{
 				var blm = player.GetModPlayer<BlackMagePlayer>();
-				blm.AddElementalStack(-BlackMagePlayer.MaxElementStacks, true);
+				blm.SetElementalStack(-BlackMagePlayer.MaxElementStacks);
 			},
 		};
 		Data[Projectile.type].Description =
@@ -349,7 +353,7 @@ internal class Fire2 : Spell
 			OnCastEffect = player =>
 			{
 				var blm = player.GetModPlayer<BlackMagePlayer>();
-				blm.AddElementalStack(BlackMagePlayer.MaxElementStacks, true);
+				blm.SetElementalStack(BlackMagePlayer.MaxElementStacks);
 			},
 		};
 		Data[Projectile.type].Description =
@@ -382,7 +386,7 @@ internal class Fire3 : Spell
 				var blm = player.GetModPlayer<BlackMagePlayer>();
 				if (blm.Firestarter)
 					player.ClearBuff(ModContent.BuffType<Firestarter>());
-				blm.AddElementalStack(BlackMagePlayer.MaxElementStacks, true);
+				blm.SetElementalStack(BlackMagePlayer.MaxElementStacks);
 			},
 		};
 		Data[Projectile.type].Description =
@@ -413,7 +417,7 @@ internal class Blizzard3 : Spell
 			OnCastEffect = player =>
 			{
 				var blm = player.GetModPlayer<BlackMagePlayer>();
-				blm.AddElementalStack(-BlackMagePlayer.MaxElementStacks, true);
+				blm.SetElementalStack(-BlackMagePlayer.MaxElementStacks);
 			},
 		};
 		Data[Projectile.type].Description =
@@ -476,6 +480,7 @@ internal class Flare : Spell
 			OnCastEffect = player =>
 			{
 				var blm = player.GetModPlayer<BlackMagePlayer>();
+				blm.SetElementalStack(BlackMagePlayer.MaxElementStacks);
 				blm.UmbralHearts = 0;
 			},
 		};
@@ -598,7 +603,7 @@ internal class Despair : Spell
 			OnCastEffect = player =>
 			{
 				var blm = player.GetModPlayer<BlackMagePlayer>();
-				blm.AddElementalStack(BlackMagePlayer.MaxElementStacks, false);
+				blm.SetElementalStack(BlackMagePlayer.MaxElementStacks);
 			},
 		};
 		Data[Projectile.type].Description =
@@ -633,7 +638,7 @@ internal class UmbralSoul : Spell
 			OnCastEffect = player =>
 			{
 				var blm = player.GetModPlayer<BlackMagePlayer>();
-				blm.AddElementalStack(-1, false);
+				blm.AddElementalStack(-1);
 				blm.UmbralHearts++;
 			},
 		};

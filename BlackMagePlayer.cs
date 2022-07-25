@@ -173,7 +173,7 @@ internal class BlackMagePlayer : ModPlayer
 		if (ElementalCharge == 0) return;
 
 		if (--ElementalChargeTimer == 0)
-			RemoveElementalStack();
+			ResetElementalStack();
 
 		if (--PolyglotTimer != 0) return;
 
@@ -252,50 +252,31 @@ internal class BlackMagePlayer : ModPlayer
 		return true;
 	}
 
-	public void AddElementalStack(int elementStack, bool swapElement)
+	public void SetElementalStack(int elementStack)
 	{
-		if (elementStack == 0)
+		if (Math.Abs(ElementalCharge) == MaxElementStacks && (AstralFire > 0 || UmbralHearts == MaxUmbralHearts))
 		{
-			if (AstralFire > 0)
-				elementStack = -1;
-			if (UmbralIce > 0)
-				elementStack = 1;
-
-			ElementalCharge = 0;
+			ParadoxReady = true;
 		}
 
-		switch (elementStack)
+		ElementalCharge      = elementStack;
+		ElementalChargeTimer = ElementalChargeMaxTime;
+	}
+
+	public void AddElementalStack(int elementStack)
+	{
+		if (ElementalCharge * elementStack < 0)
 		{
-			case > 0:
-			{
-				if (UmbralIce == MaxElementStacks && UmbralHearts == MaxUmbralHearts && !swapElement)
-					ParadoxReady = true;
-
-				if (UmbralIce > 0 && !swapElement)
-					RemoveElementalStack();
-				else
-					AstralFire += elementStack;
-
-				ElementalChargeTimer = ElementalChargeMaxTime;
-				break;
-			}
-			case < 0:
-			{
-				if (AstralFire == MaxElementStacks && !swapElement)
-					ParadoxReady = true;
-
-				if (AstralFire > 0 && !swapElement)
-					RemoveElementalStack();
-				else
-					UmbralIce += -elementStack;
-
-				ElementalChargeTimer = ElementalChargeMaxTime;
-				break;
-			}
+			ResetElementalStack();
+		}
+		else
+		{
+			ElementalCharge      += elementStack;
+			ElementalChargeTimer =  ElementalChargeMaxTime;
 		}
 	}
 
-	public void RemoveElementalStack()
+	public void ResetElementalStack()
 	{
 		ElementalCharge      = 0;
 		UmbralHearts         = 0;

@@ -24,6 +24,7 @@ internal class BlackMagePlayer : ModPlayer
 	public const int MaxElementStacks = 3;
 	public const int MaxUmbralHearts  = 3;
 	public const int MaxPolyglots     = 2;
+	public const int MinAllMP         = 800;
 
 	public static int[]   MPRegenRate        { get; } = { 6200, 4700, 3200, 200, 0, 0, 0 };
 	public static float[] FireMPMultList     { get; } = { 0f, 0f, 0f, 1f, 2f, 2f, 2f };
@@ -190,19 +191,21 @@ internal class BlackMagePlayer : ModPlayer
 	public int GetSpellCost(int spellId)
 	{
 		Spell.SpellData spellData = Spell.Data[spellId];
-		return spellData.Element switch
+
+		return spellData.MPCost switch
 		{
-			Constants.Elements.FireElement when spellData.MPCost == -1 && UmbralHearts > 0 => Math.Max(
-				(int)(MP / 1.5f),
-				800),
-			Constants.Elements.FireElement when spellData.MPCost == -1 => Math.Max(MP, 800),
-			Constants.Elements.FireElement                             => (int)(spellData.MPCost * FireMPMult),
-			Constants.Elements.IceElement                              => (int)(spellData.MPCost * IceMPMult),
-			Constants.Elements.ParadoxElement when UmbralIce > 0       => 0,
-			Constants.Elements.NoElement                               => spellData.MPCost,
-			Constants.Elements.PolyglotElement                         => spellData.MPCost,
-			Constants.Elements.TransposeElement                        => spellData.MPCost,
-			_                                                          => spellData.MPCost
+			-2 => Math.Max(
+				(int)(MP / (UmbralHearts > 0 ? 1.5f : 1f)),
+				MinAllMP
+			),
+			-1 => Math.Max(MP, MinAllMP),
+			_ => spellData.Element switch
+			{
+				Constants.Elements.FireElement                       => (int)(spellData.MPCost * FireMPMult),
+				Constants.Elements.IceElement                        => (int)(spellData.MPCost * IceMPMult),
+				Constants.Elements.ParadoxElement when UmbralIce > 0 => 0,
+				_                                                    => spellData.MPCost,
+			},
 		};
 	}
 

@@ -466,7 +466,7 @@ internal class Flare : Spell
 		{
 			SpellName      = "Flare",
 			Potency        = 280,
-			MPCost         = -1,
+			MPCost         = -2,
 			CastTime       = 240,
 			Cooldown       = 0,
 			GlobalCooldown = true,

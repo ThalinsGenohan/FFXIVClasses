@@ -254,7 +254,7 @@ internal class Transpose : Spell
 				
 				if (blm.AstralFire > 0)
 					blm.SetElementalStack(-1);
-				if (blm.UmbralIce > 0)
+				else if (blm.UmbralIce > 0)
 					blm.SetElementalStack(1);
 			},
 		};

@@ -76,6 +76,10 @@ public static class Constants
 	public static class Colors
 	{
 		public static readonly Color BlackMage           = new(0x60, 0x46, 0x88);
+		public static readonly Color HPTopDark           = new(0x4f, 0x83, 0x1e);
+		public static readonly Color HPTopLight          = new(0xa9, 0xde, 0x4c);
+		public static readonly Color HPBottomDark        = new(0x1c, 0x54, 0x04);
+		public static readonly Color HPBottomLight       = new(0x73, 0xa9, 0x30);
 		public static readonly Color MPTopDark           = new(0xaf, 0x2c, 0x64);
 		public static readonly Color MPTopLight          = new(0xfb, 0x79, 0xb9);
 		public static readonly Color MPBottomDark        = new(0x71, 0x04, 0x35);

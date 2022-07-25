@@ -148,10 +148,10 @@ internal class BlackMagePlayer : ModPlayer
 		}
 
 		foreach (string spellId in from spellDataPair in Spell.Data
-		                        let spellId = spellDataPair.Key
-		                        let spellData = spellDataPair.Value
-		                        where spellData.Cooldown > 0
-		                        select spellId)
+		                           let spellId = spellDataPair.Key
+		                           let spellData = spellDataPair.Value
+		                           where spellData.Cooldown > 0
+		                           select spellId)
 		{
 			if (SpellCooldowns.ContainsKey(spellId))
 			{
@@ -255,9 +255,7 @@ internal class BlackMagePlayer : ModPlayer
 	public void SetElementalStack(int elementStack)
 	{
 		if (Math.Abs(ElementalCharge) == MaxElementStacks && (AstralFire > 0 || UmbralHearts == MaxUmbralHearts))
-		{
 			ParadoxReady = true;
-		}
 
 		ElementalCharge      = elementStack;
 		ElementalChargeTimer = ElementalChargeMaxTime;

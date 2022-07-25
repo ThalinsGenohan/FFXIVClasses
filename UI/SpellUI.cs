@@ -58,9 +58,7 @@ internal class SpellUI : UIState
 			button.Activate();
 
 			int mpCost = blm.GetSpellCost(spellId);
-			button.ManaText.SetText(spellData.MPCost < 0 ? "All" : mpCost > 0 ? mpCost.ToString() : "",
-			                        0.8f,
-			                        false);
+			button.ManaText.SetText(spellData.MPCost < 0 ? "All" : mpCost > 0 ? mpCost.ToString() : "", 0.8f, false);
 
 			button.ManaText.TextColor = mpCost > blm.MP ? Color.Red : Color.White;
 

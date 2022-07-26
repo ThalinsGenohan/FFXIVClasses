@@ -26,20 +26,33 @@ internal class BlackMagePlayer : ModPlayer
 	public const int MaxPolyglots     = 2;
 	public const int MinAllMP         = 800;
 
-	public static int[]   MPRegenRate        { get; } = { 6200, 4700, 3200, 200, 0, 0, 0 };
-	public static float[] FireMPMultList     { get; } = { 0f, 0f, 0f, 1f, 2f, 2f, 2f };
-	public static float[] IceMPMultList      { get; } = { 0f, 0.5f, 0.75f, 1f, 0f, 0f, 0f };
-	public static float[] FireDamageMultList { get; } = { 0.7f, 0.8f, 0.9f, 1f, 1.4f, 1.6f, 1.8f };
-	public static float[] IceDamageMultList  { get; } = { 1f, 1f, 1f, 1f, 0.9f, 0.8f, 0.7f };
+	public static (
+		int MPRegenRate,
+		float FireMPMultiplier,
+		float IceMPMultiplier,
+		float FireDamageMultiplier,
+		float IceDamageMultiplier
+		)[] ElementChargeValues { get; } =
+	{
+		// MP  FireMP  IceMP  FireDam IceDam
+		(6200, 0f,     0f,    0.7f,   1f  ), // Umbral Ice III
+		(4700, 0f,     0.5f,  0.8f,   1f  ), // Umbral Ice II
+		(3200, 0f,     0.75f, 0.9f,   1f  ), // Umbral Ice I
+		( 200, 1f,     1f,    1f,     1f  ), // No Charge
+		(   0, 2f,     0f,    1.4f,   0.9f), // Astral Fire I
+		(   0, 2f,     0f,    1.6f,   0.8f), // Astral Fire II
+		(   0, 2f,     0f,    1.8f,   0.7f), // Astral Fire III
+	};
 
 	public Dictionary<string, uint> SpellCooldowns { get; } = new();
 
-	public float FireMPMult =>
-		FireMPMultList[(UmbralHearts > 0 && AstralFire > 0 ? 0 : ElementalCharge) + MaxElementStacks];
+	public float FireMPMultiplier => UmbralHearts > 0 && AstralFire > 0
+		                                 ? ElementChargeValues[0 + MaxElementStacks].FireMPMultiplier
+		                                 : ElementChargeValues[ElementalCharge + MaxElementStacks].FireMPMultiplier;
 
-	public float IceMPMult      => IceMPMultList[ElementalCharge + MaxElementStacks];
-	public float FireDamageMult => FireDamageMultList[ElementalCharge + MaxElementStacks];
-	public float IceDamageMult  => IceDamageMultList[ElementalCharge + MaxElementStacks];
+	public float IceMPMultiplier      => ElementChargeValues[ElementalCharge + MaxElementStacks].IceMPMultiplier;
+	public float FireDamageMultiplier => ElementChargeValues[ElementalCharge + MaxElementStacks].FireDamageMultiplier;
+	public float IceDamageMultiplier  => ElementChargeValues[ElementalCharge + MaxElementStacks].IceDamageMultiplier;
 
 	public int AllowedElementStacks
 	{
@@ -167,7 +180,7 @@ internal class BlackMagePlayer : ModPlayer
 		if (--MPTickTimer == 0)
 		{
 			MPTickTimer =  MPTickMaxTime;
-			MP          += MPRegenRate[ElementalCharge + MaxElementStacks];
+			MP          += ElementChargeValues[ElementalCharge + MaxElementStacks].MPRegenRate;
 		}
 
 		if (ElementalCharge == 0) return;
@@ -201,8 +214,8 @@ internal class BlackMagePlayer : ModPlayer
 			-1 => Math.Max(MP, MinAllMP),
 			_ => spellData.Element switch
 			{
-				Constants.Elements.FireElement                       => (int)(spellData.MPCost * FireMPMult),
-				Constants.Elements.IceElement                        => (int)(spellData.MPCost * IceMPMult),
+				Constants.Elements.FireElement                       => (int)(spellData.MPCost * FireMPMultiplier),
+				Constants.Elements.IceElement                        => (int)(spellData.MPCost * IceMPMultiplier),
 				Constants.Elements.ParadoxElement when UmbralIce > 0 => 0,
 				_                                                    => spellData.MPCost,
 			},
@@ -320,10 +333,10 @@ internal class BlackMagePlayer : ModPlayer
 			case Constants.Elements.FireElement:
 				if (AstralFire > 0 && UmbralHearts > 0 && spellData.MPCost > 0)
 					UmbralHearts--;
-				damage = (int)(damage * FireDamageMult);
+				damage = (int)(damage * FireDamageMultiplier);
 				break;
 			case Constants.Elements.IceElement:
-				damage = (int)(damage * IceDamageMult);
+				damage = (int)(damage * IceDamageMultiplier);
 				break;
 			case Constants.Elements.ParadoxElement:
 				ParadoxReady = false;
